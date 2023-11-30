@@ -1,6 +1,4 @@
 import fs from 'fs'
-paths['']
-pathtoString['']
 export default function extract(filePath)
 {
     try{
