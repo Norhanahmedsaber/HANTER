@@ -1,2 +1,2 @@
-import hanter from "./index.mjs";
-hanter()
+import run from './cli/cli.mjs'
+run()
