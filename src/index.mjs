@@ -14,5 +14,5 @@ export default function hanter(){
     const config = parseConfig()
     //console.log(getFiles('./src', config))
 
-    report(Errors.error1)
+    //report(Errors.error1)
 }
