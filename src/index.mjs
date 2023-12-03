@@ -5,10 +5,10 @@ import extract from './extractor/extractor.mjs'
 import reporter from './reporter/reporter.mjs'
 import parseConfig from './utils/parsingconfig.mjs'
 import getRules from './rules_parser/get_rules.mjs'
+import evaluate from './matcher/evaluate.mjs'
+
 
 export default function hanter(){
-    //const config = parseConfig()
-    
-    // console.log(getFiles('./src', config))
-    console.log(getRules())
+
+
 }
