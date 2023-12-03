@@ -13,3 +13,4 @@ export  const errorMessages = {
 export default function report(error){
     throw new Error(errorMessages[error]);
 }
+
