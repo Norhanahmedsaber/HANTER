@@ -1,4 +1,4 @@
 {
-    "ignoredPatterns": ["src/cli/**/*.mjs"],
-    "extensions": ["js", "mjs"]
+    "ignoredPatterns": ["node_modules/**/*.*","node_modules/**/.*"],
+    "extensions": ["mts", "js", "mjs"]
 }
