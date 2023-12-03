@@ -6,6 +6,7 @@ import reporter from './reporter/reporter.mjs'
 import parseConfig from './utils/parsingconfig.mjs'
 import getRules from './rules_parser/get_rules.mjs'
 import evaluate from './matcher/evaluate.mjs'
+
 import parseRule from './rules_parser/rules_parser.mjs'
 
 
@@ -24,4 +25,5 @@ export default function hanter(){
     }
     console.log(reports.reports)
 
+    //report(Errors.error1)
 }
