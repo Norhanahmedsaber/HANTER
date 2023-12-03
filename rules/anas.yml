@@ -1,6 +1,6 @@
 id: insecure-deserialization
 patterns:
   - pattern: |
-        $X=5
-        $x=5
+      $X=5
+      $Z=5
 message: "Avoid insecure deserialization using pickle.loads"

@@ -29,6 +29,7 @@ function parseContainer(container) {
 }
 function parsePattern(rule) {
     try {
+        console.log(rule)
        return parseScript(rule)
     }
     catch (err) {

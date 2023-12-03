@@ -10,12 +10,17 @@ import parseRule from './rules_parser/rules_parser.mjs'
 
 
 export default function hanter(){
-    const config = parseConfig()
-    const files = getFiles('./src', config)
-    for(let file of files) {
-        const source = extract(file)
-        const ast = parse(source)
-        console.log(file)
-        console.log(ast)
+    const rules = getRules();
+    for(let rule of rules) {
+        rule = parseRule(rules)
     }
+    const sourceFiles = getFiles('./test', parseConfig())
+    const reports = {reports: []}
+    for(let file of sourceFiles) {
+        match({
+            name: file,
+            ast: parse(extract(file))
+        }, rules, reports)
+    }
+    console.log(reports.reports)
 }
