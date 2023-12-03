@@ -1,0 +1,7 @@
+id: my_pattern_id-copy
+  patterns:
+    - pattern-regex: a(?P<FIRST>.*)b(?P<SECOND>.*)
+  message: Semgrep found a match, with $FIRST and $SECOND
+  languages:
+    - regex
+  severity: WARNING

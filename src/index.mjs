@@ -11,4 +11,16 @@ export default function hanter(){
     
     //console.log(getFiles('./src', config))
 
+import parseRule from './rules_parser/rules_parser.mjs'
+
+export default function hanter(){
+    console.log(parseRule({
+        id: 'open-never-closed',
+        message: 'file $X object opened without corresponding close',
+        languages: [ 'python' ],
+        severity: 'ERROR',
+        patterns: [
+            { patterns: [ { pattern: 'x = 2' }, { pattern: null } ] },
+            { 'patterns-either': [ { pattern: null }, { pattern: null } 
+        ] }]}).patterns[0].patterns)
 }
