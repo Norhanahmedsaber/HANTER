@@ -3,13 +3,14 @@ import fs from 'fs'
 import yaml from 'js-yaml'
 
 export default function getRules()
-{   let rulesJson = []
+{   
+    let rulesJson = []
     const rules = getFiles('./rules',{extensions:["yml"] , ignoredPatterns:[]})
     rules.forEach(rule => {
         const ruleJson = ymlToJson(rule)
         if(ruleJson)
         {
-            rulesJson.push(ruleJson.rules[0])
+            rulesJson.push(ruleJson)
         }
     });
     return rulesJson

@@ -1,4 +1,4 @@
 {
     "ignoredPatterns": ["node_modules/**/*.*","node_modules/**/.*"],
-    "extensions": ["mts", "js", "mjs"]
+    "extensions": [ "js", "mjs"]
 }

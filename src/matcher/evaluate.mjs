@@ -1,6 +1,4 @@
-
 export default function evaluate(logicObject) {
-
     // Base case: if the type is 'pattern', return the value directly
     if (logicObject.type === 'pattern') {
         return logicObject.value;
@@ -18,7 +16,6 @@ export default function evaluate(logicObject) {
         throw new Error(`Unknown logic gate type: ${logicObject.type}`);
     }
 }
-
 // // Example usage
 // const x= {
 //     type: 'OR',

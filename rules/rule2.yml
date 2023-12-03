@@ -1,7 +1,6 @@
-rules:
-  - id: insecure-deserialization
-    patterns:
-      - pattern: |
-          import pickle
-          pickle.loads($X)
-    message: "Avoid insecure deserialization using pickle.loads"
+id: insecure-deserialization
+patterns:
+  - pattern: |
+        $X=5
+        $x=5
+message: "Avoid insecure deserialization using pickle.loads"

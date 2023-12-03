@@ -6,9 +6,16 @@ import reporter from './reporter/reporter.mjs'
 import parseConfig from './utils/parsingconfig.mjs'
 import getRules from './rules_parser/get_rules.mjs'
 import evaluate from './matcher/evaluate.mjs'
+import parseRule from './rules_parser/rules_parser.mjs'
 
 
 export default function hanter(){
-
-
+    const config = parseConfig()
+    const files = getFiles('./src', config)
+    for(let file of files) {
+        const source = extract(file)
+        const ast = parse(source)
+        console.log(file)
+        console.log(ast)
+    }
 }
