@@ -7,7 +7,8 @@ import parseConfig from './utils/parsingconfig.mjs'
 import getRules from './rules_parser/get_rules.mjs'
 
 export default function hanter(){
-    //const config = parseConfig()
+   // const config = parseConfig()
+    // console.log(config.rules)
     
     // console.log(getFiles('./src', config))
     console.log(getRules())
