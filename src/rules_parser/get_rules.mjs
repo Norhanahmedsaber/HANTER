@@ -14,7 +14,7 @@ export default function getRules()
             const ruleJson = ymlToJson(rule)
             if(ruleJson)
             {
-                rulesJson.push(ruleJson.rules[0])
+                rulesJson.push(ruleJson)
             }
         }
     });
