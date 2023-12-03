@@ -5,3 +5,4 @@ id: my_pattern_id-copy
   languages:
     - regex
   severity: WARNING
+
