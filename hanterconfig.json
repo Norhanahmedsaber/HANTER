@@ -1,4 +1,6 @@
 {
-    "ignoredPatterns": ["node_modules/**/*.*","node_modules/**/.*"],
-    "extensions": [ "js", "mjs"]
+    "exculdeRules": [""],
+    "exculdeRulesDirs": ["rules/injection/**.*"],
+    "ignoredPatterns": ["src/cli/**/*.mjs"],
+    "extensions": ["js", "mjs"]
 }

@@ -1,0 +1,6 @@
+id: insecure
+patterns:
+  - pattern: |
+      import pickle
+      pickle.loads($X)
+message: "Avoid insecure deserialization using pickle.loads"
