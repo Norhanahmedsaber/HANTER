@@ -2,6 +2,8 @@ import { Console } from 'console';
 import { parseScript } from '../../dist/src/meryiah/src/meriyah.mjs';
 
 export default function parseRule(rule) {
+    // get first rule --input is array--
+    rule = rule[0]
     for (let key of Object.keys(rule)) {
         if ( key == "pattern" || key == "pattern-not")
         {
@@ -29,7 +31,6 @@ function parseContainer(container) {
 }
 function parsePattern(rule) {
     try {
-        console.log(rule)
        return parseScript(rule)
     }
     catch (err) {

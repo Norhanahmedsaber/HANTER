@@ -7,10 +7,9 @@ export default function getRules()
 {   
     let rulesJson = []
     const config = parseConfig()
-    console.log(config.exculdeRulesDirs)
     const rulesFiles = getFiles('./rules',{extensions:["yml"] , ignoredPatterns:config.exculdeRulesDirs})
-     rulesFiles.forEach(rule => {
-       if(!isRuleContained(rule , config.exculdeRules)){
+    rulesFiles.forEach(rule => {
+        if(!isRuleContained(rule , config.exculdeRules)){
             const ruleJson = ymlToJson(rule)
             if(ruleJson)
             {
@@ -25,7 +24,6 @@ export default function getRules()
 function ymlToJson(ymlPath)
 {
     try{
-
         const ruleFile = fs.readFileSync(ymlPath , 'utf-8')
         const ruleJson = yaml.load(ruleFile)
         return ruleJson

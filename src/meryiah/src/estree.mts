@@ -149,19 +149,19 @@ export type DeclarationStatement =
 export type EntityName = Identifier;
 export type ExportDeclaration = ClassDeclaration | ClassExpression | FunctionDeclaration | VariableDeclaration;
 export type Expression =
-  | ArrowFunctionExpression
-  | AssignmentExpression
-  | BinaryExpression
-  | ConditionalExpression
+  | ArrowFunctionExpression // HANT
+  | AssignmentExpression // HANT
+  | BinaryExpression // HANT
+  | ConditionalExpression // HANT
   | MetaProperty
-  | ChainExpression
+  | ChainExpression // HANT
   | JSXClosingElement
   | JSXClosingFragment
   | JSXExpressionContainer
   | JSXOpeningElement
   | JSXOpeningFragment
   | JSXSpreadChild
-  | LogicalExpression
+  | LogicalExpression // HANT
   | NewExpression
   | RestElement
   | SequenceExpression

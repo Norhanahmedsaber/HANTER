@@ -23,7 +23,6 @@ export default function hanter(){
             ast: parse(extract(file))
         }, rules, reports)
     }
-    console.log(reports.reports)
 
     //report(Errors.error1)
 }

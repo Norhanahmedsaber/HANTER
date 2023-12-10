@@ -1,10 +1,5 @@
-rules: 
-  - id: insecure-deserialization 
-    patterns: 
-      - pattern: | 
-          import pickle 
-          pickle.loads($X) 
-      - pattern: | 
-          import pickle 
-          pickle.loads($X)     
-    message: "Avoid insecure deserialization using pickle.loads"
+id: anas-nora-test 
+type: 1
+patterns:
+    - pattern: "const react = require('react')"     
+message: "Avoid insecure deserialization using pickle.loads"
