@@ -1,13 +1,17 @@
-const figlet = require('figlet')
-const yargs = require('yargs')
-
+import figlet from 'figlet'
+import yargs from 'yargs'
+import main from './services/main.js'
+import { hideBin } from 'yargs/helpers'
 function run () {
-    const text="HANTER"
+    const text="\nHANTER"
     const asciiArt = figlet.textSync(text,{
         font:'ANSI Shadow'
     })
-    console.log(asciiArt)
-    const commands = yargs.commandDir('commands').demandCommand().help().argv
+    console.log("\n" + asciiArt)
+    const commands = yargs(hideBin(process.argv)).commandDir('commands').demandCommand(0,"").argv
+    if(!commands.length) {
+        main()
+    }
     
 } 
-module.exports = run
+export default run
