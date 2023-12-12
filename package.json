@@ -56,11 +56,11 @@
     "unicode-13.0.0": "^0.8.0"
   },
   "dependencies": {
-    "js-yaml": "^4.1.0",
-    "minimatch": "^9.0.3",
     "abstract-syntax-tree": "^2.21.1",
     "chalk": "^4.1.1",
     "figlet": "^1.5.2",
+    "js-yaml": "^4.1.0",
+    "minimatch": "^9.0.3",
     "yargs": "^16.2.0"
   }
 }
