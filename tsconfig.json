@@ -11,7 +11,7 @@
       "noImplicitReturns": true,
       "noImplicitThis": true,
       // "noUnusedParameters": true,
-      "outDir": "dist",
+      // "outDir": "dist",
       "preserveConstEnums": false,
       "preserveWatchOutput": true,
       "pretty": true,
