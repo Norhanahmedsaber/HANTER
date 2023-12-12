@@ -1,2 +1,3 @@
 #! /usr/bin/env node
-console.log("el hamdullah")
+const run = require('../lib/cli/cli')
+run()

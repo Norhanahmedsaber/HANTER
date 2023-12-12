@@ -17,13 +17,13 @@ export default function hanter(){
     }
     const sourceFiles = getFiles('./', parseConfig())
     console.log(sourceFiles)
-    // const reports = {reports: []}
-    // for(let file of sourceFiles) {
-    //     match({
-    //         name: file,
-    //         ast: parse(extract(file))
-    //     }, rules, reports)
-    // }
+    const reports = {reports: []}
+    for(let file of sourceFiles) {
+        match({
+            name: file,
+            ast: parse(extract(file))
+        }, rules, reports)
+    }
 
     //report(Errors.error1)
 }
