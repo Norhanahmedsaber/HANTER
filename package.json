@@ -1,15 +1,29 @@
 {
   "name": "hanter",
-  "version": "1.0.0",
-  "description": "",
-  "main": "src/hanter.mjs",
+  "version": "1.0.1",
+  "description": "SAST Tool For Javascript",
+  "main": "bin/index.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "dev": "nodemon src/hanter.mjs"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/norhanahmedsaber/hanter.git"
+  },
+
+  "author": "hant22",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/norhanahmedsaber/hanter/issues"
+  },
+  "homepage": "https://github.com/norhanahmedsaber/hanter#readme",
+  "keywords": [
+    "hanter",
+    "hant"
+  ],
+  "bin": {
+    "hanter": "./bin/index.mjs"
+  },
   "devDependencies": {
     "@rollup/plugin-json": "^4.1.0",
     "@types/mocha": "^9.1.1",
@@ -43,8 +57,11 @@
     "unicode-13.0.0": "^0.8.0"
   },
   "dependencies": {
-    "abstract-syntax-tree": "^2.21.1",
     "js-yaml": "^4.1.0",
-    "minimatch": "^9.0.3"
+    "minimatch": "^9.0.3",
+    "abstract-syntax-tree": "^2.21.1",
+    "chalk": "^4.1.1",
+    "figlet": "^1.5.2",
+    "yargs": "^16.2.0"
   }
 }
