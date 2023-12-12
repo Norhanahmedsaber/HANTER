@@ -1,6 +1,6 @@
 {
   "name": "hanter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "SAST Tool For Javascript",
   "main": "bin/index.mjs",
   "scripts": {
@@ -10,7 +10,6 @@
     "type": "git",
     "url": "git+https://github.com/norhanahmedsaber/hanter.git"
   },
-
   "author": "hant22",
   "license": "ISC",
   "bugs": {
