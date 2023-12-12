@@ -1,5 +1,8 @@
 #! /usr/bin/env node
-import run from '../src/cli/cli.js'
+
+import run from "../lib/cli/cli.js"
+
+console.log("anas")
 run()
 
 
