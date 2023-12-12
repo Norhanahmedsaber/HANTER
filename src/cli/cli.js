@@ -9,7 +9,7 @@ function run () {
     })
     console.log("\n" + asciiArt)
     const commands = yargs(hideBin(process.argv)).commandDir('commands').demandCommand(0,"").argv
-    if(!commands.length) {
+    if(!commands._.length) {
         main()
     }
     
