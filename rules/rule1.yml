@@ -1,5 +1,5 @@
 id: anas-nora-test 
 type: 1
 patterns:
-    - pattern: "const x = (a, b) => {if(y,3) {  } x }"     
+    - pattern: "const anas = (...x)=>{}"     
 message: "Avoid insecure deserialization using pickle.loads"
