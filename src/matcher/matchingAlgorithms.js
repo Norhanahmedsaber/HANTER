@@ -3,6 +3,7 @@ import leftHandSideExpression from "./definitions/leftHandSideExpression"
 import primaryExpression from './definitions/primaryExpression'
 import literalExpression from './definitions/literalExpression'
 import statement from './definitions/statement'
+import restElement from './definitions/restElement'
 function matchVariableDeclaration(targetednNode, node) {
 
     // Kind Checking
@@ -358,6 +359,17 @@ function matchStatement(targetednNode, node) {
     }
     return true
 }
+function matchArguments(targetednNode, node) {
+    if(targetednNode.length > node.length) {
+        return false
+    }
+    for(let index in targetednNode) {
+        if(!matchExpression(targetednNode[index], node[index])) {
+            return false
+        }
+    }
+    return true
+}
 function matchParameter(targetednNode,node) {
     if(targetednNode.type!==node.type) {
         return false
@@ -426,28 +438,133 @@ function matchAssignmentPattern(targetednNode,node) {
     return true
 }
 function matchAssignmentExpression(targetednNode,node) {
+    // operator
+    if(targetednNode.operator !== node.operator) {
+        return false
+    }
+    // left
+    if(!matchExpression(targetednNode.left, node.left)) {
+        return false
+    }
+    // right
+    if(!matchExpression(targetednNode.right, node.right)) {
+        return false
+    }
     return true
 }
 function matchBinaryExpression(targetednNode,node) {
+    // operator
+    if(targetednNode.operator !== node.operator) {
+        return false
+    }
+    // left
+    if(!matchExpression(targetednNode.left, node.left)) {
+        return false
+    }
+    // right
+    if(!matchExpression(targetednNode.right, node.right)) {
+        return false
+    }
     return true
 
 }
 function matchConditionalExpression(targetednNode,node) {
+    // test
+    if(!matchExpression(targetednNode.test, node.test)) {
+        return false
+    }
+    // consequent
+    if(!matchExpression(targetednNode.consequent, node.consequent)) {
+        return false
+    }
+    // alternate
+    if(!matchExpression(targetednNode.alternate, node.alternate)) {
+        return false
+    }
     return true
 
 }
 function matchLogicalExpression(targetednNode,node) {
+    // operator
+    if(targetednNode.operator !== node.operator) {
+        return false
+    }
+    // left
+    if(!matchExpression(targetednNode.left, node.left)) {
+        return false
+    }
+    // right
+    if(!matchExpression(targetednNode.right, node.right)) {
+        return false
+    }
     return true
 
 }
-function matchNewExpression(targetednNode,node) {
+function matchNewExpression(targtedNode,node) {
+    // callee
+    if(!matchLeftHandSideExpression(targtedNode.callee, node.callee)) {
+        return false
+    }
+    // arguments
+    if(!matchArguments(targtedNode.arguments, node.arguments)) {
+        return false
+    }
     return true
 
 }
-function matchRestElement(targetednNode,node){
+function matchRestElement(targtedNode,node){
+    // argument
+    if(targtedNode.argument.type !== node.argument.type) {
+        return false
+    }
+
+    switch(restElement[targtedNode]) {
+        case 'Identifier':
+            if(!matchIdentifier(targtedNode.argument, node.argument)) {
+                return false
+            }
+            break;
+        case 'PropertyName':
+            if(!matchPropertyName(targtedNode.argument, node.argument)) {
+                return false
+            }
+            break;
+        case 'BindingPattern':
+            if(!matchBindingPattern(targtedNode.argument, node.argument)) {
+                return false
+            }
+            break;
+    }
+    // value (OPTIONAL)
+    // Value isn't applicable in JS we can't decalre params after a rest element
+    
     return true
 
 }
+
+function matchBindingPattern(targetednNode, node) {
+    return true
+
+}
+
+function matchPropertyName(targetednNode, node) {
+    switch(targetednNode.type) {
+        case 'Identifier':
+            if(!matchIdentifier(targetednNode, node)) {
+                return false
+            }
+            break
+        case 'Literal':
+            if(!matchLiteral(targetednNode, node)) {
+                return false
+            }
+            break
+            
+    }
+    return true
+    
+}
+
 function matchSequenceExpression(targetednNode,node){
     return true
 
@@ -456,6 +573,7 @@ function matchAwaitExpression(targetednNode,node){
     return true
 
 }
+
 function matchLeftHandSideExpression(targetednNode,node){
     switch(leftHandSideExpression[targetednNode.type]) {
         case 'CallExpression':
@@ -536,6 +654,9 @@ function matchFunctionExpression(targetednNode, node){
 
 }
 function matchLiteralExpression(targetednNode, node){
+    if(targetednNode.type !== node.type) {
+        return false
+    }
     switch(literalExpression[targetednNode.type]) {
         case 'Literal':
             if(!matchLiteral(targetednNode, node)) {
@@ -663,6 +784,9 @@ function matchJSXOpeningElement(targetednNode,node) {
     
  }
 function matchLiteral(targetednNode,node) {
+    if(targetednNode.value !== node.value) {
+        return false
+    }
     return true
     
  }
@@ -753,11 +877,6 @@ function matchExpression(targetednNode,node) {
                 return false;
             }
             break; 
-        case 'AwaitExpression':
-            if(!matchAwaitExpression(targetednNode,node)) {
-                return false;
-            }
-            break;
         case 'AwaitExpression':
             if(!matchAwaitExpression(targetednNode,node)) {
                 return false;

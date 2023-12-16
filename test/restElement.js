@@ -1,3 +1,10 @@
+// export interface RestElement extends _Node {
+//     type: 'RestElement';
+//     argument: BindingPattern | Identifier | MetaVariable | Expression | PropertyName;
+//     value?: AssignmentPattern; // Not applicable in JS no params should be decalred after a rest element
+//   }
+
+
 const sourceCode = 'const x = (...x) => {}'
 const node = {
   type: 'VariableDeclaration',
@@ -18,3 +25,7 @@ const node = {
 }
 console.log(require('abstract-syntax-tree').parse(sourceCode).body[0].declarations[0].init.params)
 // console.log(require('abstract-syntax-tree').generate(node))
+
+
+
+  

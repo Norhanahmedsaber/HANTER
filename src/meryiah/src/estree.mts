@@ -668,7 +668,7 @@ export interface MethodDefinition extends MethodDefinitionBase {
 export interface NewExpression extends _Node {
   type: 'NewExpression';
   callee: LeftHandSideExpression;
-  arguments: Expression[];
+  arguments: Expression[] | General;
 }
 
 export interface ObjectExpression extends _Node {
