@@ -140,12 +140,12 @@ export type Node =
 export type BindingPattern = ArrayPattern | ObjectPattern | Identifier | MetaVariable | General;
 export type ClassElement = FunctionExpression | MethodDefinition;
 export type DeclarationStatement =
-  | ClassDeclaration
-  | ClassExpression
-  | ExportDefaultDeclaration
-  | ExportAllDeclaration
-  | ExportNamedDeclaration
-  | FunctionDeclaration;
+  | ClassDeclaration //PM
+  | ClassExpression //PM
+  | ExportDefaultDeclaration //PM
+  | ExportAllDeclaration //PM
+  | ExportNamedDeclaration //PM
+  | FunctionDeclaration; //HANT
 export type EntityName = Identifier;
 export type ExportDeclaration = ClassDeclaration | ClassExpression | FunctionDeclaration | VariableDeclaration;
 export type Expression =
@@ -154,7 +154,7 @@ export type Expression =
   | BinaryExpression // HANT
   | ConditionalExpression // HANT
   | MetaProperty
-  | ChainExpression // HANT
+  | ChainExpression 
   | JSXClosingElement
   | JSXClosingFragment
   | JSXExpressionContainer
@@ -162,12 +162,12 @@ export type Expression =
   | JSXOpeningFragment
   | JSXSpreadChild
   | LogicalExpression // HANT
-  | NewExpression
-  | RestElement
-  | SequenceExpression
-  | SpreadElement
-  | AwaitExpression
-  | LeftHandSideExpression
+  | NewExpression // HANT
+  | RestElement // NA
+  | SequenceExpression // HANT
+  | SpreadElement // NA
+  | AwaitExpression // HANT  
+  | LeftHandSideExpression //HANT
   | UnaryExpression
   | UpdateExpression
   | YieldExpression
@@ -180,37 +180,37 @@ export type JSXChild = JSXElement | JSXExpression | JSXFragment | JSXText;
 export type JSXExpression = JSXEmptyExpression | JSXSpreadChild | JSXExpressionContainer;
 export type JSXTagNameExpression = JSXIdentifier | JSXMemberExpression | JSXNamespacedName;
 export type LeftHandSideExpression =
-  | CallExpression
+  | CallExpression // HANT 
   | ChainExpression
-  | ImportExpression
-  | ClassExpression
-  | ClassDeclaration
-  | FunctionExpression
-  | LiteralExpression
-  | MemberExpression
+  | ImportExpression // HANT
+  | ClassExpression // PM
+  | ClassDeclaration //PM
+  | FunctionExpression // HANT
+  | LiteralExpression // HANT (IN)
+  | MemberExpression // HANT
   | PrimaryExpression
   | TaggedTemplateExpression;
 export type LiteralExpression = Literal | TemplateLiteral;
 export type ObjectLiteralElementLike = MethodDefinition | Property | RestElement | SpreadElement;
 export type Parameter = AssignmentPattern | RestElement | ArrayPattern | ObjectPattern | Identifier;
 export type PrimaryExpression =
-  | MetaVariable
-  | ArrayExpression
-  | ArrayPattern
-  | ClassExpression
-  | FunctionExpression
-  | Identifier
-  | Import
-  | JSXElement
+  | MetaVariable 
+  | ArrayExpression //HANT
+  | ArrayPattern // NA
+  | ClassExpression // PM
+  | FunctionExpression // HANT
+  | Identifier // HANT
+  | Import // HANT
+  | JSXElement 
   | JSXFragment
   | JSXOpeningElement
-  | Literal
-  | LiteralExpression
-  | MetaProperty
-  | ObjectExpression
-  | ObjectPattern
-  | Super
-  | TemplateLiteral
+  | Literal //HANT
+  | LiteralExpression //HANT
+  | MetaProperty 
+  | ObjectExpression //HANT
+  | ObjectPattern //PM
+  | Super //HANT
+  | TemplateLiteral //PM
   | ThisExpression;
 export type PrimaryExpressionExtended =
   // HANT 
@@ -241,23 +241,23 @@ export type PrimaryExpressionExtended =
   | UpdateExpression;
 export type PropertyName = Identifier | Literal | MetaVariable;
 export type Statement =
-  | BlockStatement
-  | BreakStatement
-  | ContinueStatement
-  | DebuggerStatement
-  | DeclarationStatement
-  | EmptyStatement
-  | ExpressionStatement
-  | IfStatement
-  | IterationStatement
-  | ImportDeclaration
-  | LabeledStatement
-  | ReturnStatement
-  | SwitchStatement
-  | ThrowStatement
-  | TryStatement
-  | VariableDeclaration
-  | WithStatement
+  | BlockStatement //HANT
+  | BreakStatement //HANT
+  | ContinueStatement //HANT
+  | DebuggerStatement //HANT
+  | DeclarationStatement  //HANT
+  | EmptyStatement 
+  | ExpressionStatement  //HANT
+  | IfStatement //HANT
+  | IterationStatement //HANT
+  | ImportDeclaration //PM
+  | LabeledStatement //HANT
+  | ReturnStatement //HANT
+  | SwitchStatement //HANT
+  | ThrowStatement //HANT
+  | TryStatement //HANT
+  | VariableDeclaration //HANT
+  | WithStatement 
   | General;
 
   
@@ -668,7 +668,7 @@ export interface MethodDefinition extends MethodDefinitionBase {
 export interface NewExpression extends _Node {
   type: 'NewExpression';
   callee: LeftHandSideExpression;
-  arguments: Expression[];
+  arguments: Expression[] | General;
 }
 
 export interface ObjectExpression extends _Node {
