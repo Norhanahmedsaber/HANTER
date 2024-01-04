@@ -1,20 +1,31 @@
-const sourceCode = 'const x = (...x) => {}'
+const sourceCode = 'const x=`nora ${anas}${anas} hesham ${g} ffff`'
 const node = {
   type: 'VariableDeclaration',
   kind: 'const',
   declarations: [ { type: 'VariableDeclarator', 
   id: { type: 'Identifier', name: 'x' }, 
   init: {
-    type: 'ArrowFunctionExpression',
-    params: [ { type: 'RestElement', argument: { type: 'Identifier', name: 'x' } }, value = {
-      type: 'AssignmentPattern',
-      left: { type: 'Identifier', name: 'y' },
-      right: { type: 'Identifier', name: 'z' },
-    } ],    
-    body: { type: 'BlockStatement', body: [] },
-    async: false,
-    expression: false
-  } } ]
+    type: 'TemplateLiteral',
+    expressions: [ { type: 'Identifier', name: 'anas' } ],       
+    quasis: [
+      {
+        type: 'TemplateElement',
+        value: { cooked: 'heelo ', raw: 'heelo ' },
+        tail: false
+      },
+      {
+        type: 'TemplateElement',
+        value: { cooked: 'nora ', raw: 'nora ' },
+        tail: false
+      },
+      {
+        type: 'TemplateElement',
+        value: { cooked: 'nora ', raw: 'ahmed ' },
+        tail: false
+      },
+    ]
+  }} ]
 }
-console.log(require('abstract-syntax-tree').parse(sourceCode).body[0].declarations[0].init.params)
+ console.log(require('abstract-syntax-tree').parse(sourceCode).body[0].declarations[0].init)
 // console.log(require('abstract-syntax-tree').generate(node))
+

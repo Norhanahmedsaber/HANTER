@@ -364,7 +364,7 @@ export interface ChainExpression extends _Node {
 
 export interface CallExpression extends _Node {
   type: 'CallExpression';
-  callee: any; //Expression | Super;
+  callee: Expression | Super; //Expression | Super;
   arguments: (Expression | SpreadElement)[];
   optional?: boolean;
 }

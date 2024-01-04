@@ -4,6 +4,7 @@ import primaryExpression from './definitions/primaryExpression'
 import literalExpression from './definitions/literalExpression'
 import statement from './definitions/statement'
 import restElement from './definitions/restElement'
+import spreadArgument from "./definitions/spreadArgument"
 function matchVariableDeclaration(targetednNode, node) {
 
     // Kind Checking
@@ -553,12 +554,12 @@ function matchPropertyName(targetednNode, node) {
             if(!matchIdentifier(targetednNode, node)) {
                 return false
             }
-            break
+            break;
         case 'Literal':
             if(!matchLiteral(targetednNode, node)) {
                 return false
             }
-            break
+            break;
             
     }
     return true
@@ -569,9 +570,11 @@ function matchSequenceExpression(targetednNode,node){
     return true
 
 }
-function matchAwaitExpression(targetednNode,node){
+function matchAwaitExpression(targetednNode,node){ // moseeba our meriyah doesnt read await as reserved word
+    if(!matchExpression(targetednNode.argument, node.argument)) {
+        return false
+    }
     return true
-
 }
 
 function matchLeftHandSideExpression(targetednNode,node){
@@ -581,22 +584,22 @@ function matchLeftHandSideExpression(targetednNode,node){
                 return false
             }
             break;
-        case 'ChainExpression':
+        case 'ChainExpression': // skipped
             if(!matchChainExpression(targetednNode, node)) {
                 return false
             }
             break;
-        case 'ImportExpression':
+        case 'ImportExpression': // skipped
             if(!matchImportExpression(targetednNode, node)) {
                 return false
             }
             break;
-        case 'ClassExpression':
+        case 'ClassExpression': // skipped
             if(!matchClassExpression(targetednNode, node)) {
                 return false
             }
             break;
-        case 'ClassDeclaration':
+        case 'ClassDeclaration': // skipped
             if(!matchClassDeclaration(targetednNode, node)) {
                 return false
             }
@@ -630,8 +633,93 @@ function matchLeftHandSideExpression(targetednNode,node){
     return true
 }
 function matchCallExpression(targetednNode, node){
+    // callee
+    if(targetednNode.callee.type !== node.callee.type) {
+        return false
+
+    }
+    if(targetednNode.type === 'Super') {
+        if(!matchSuper(targetednNode, node)) {
+            return false
+        }
+    }
+    else {
+        if(!matchExpression(targetednNode.callee, node.callee)) {
+            return false
+        }
+    }
+    
+    // arguments
+    if(targetednNode.arguments.length > node.arguments.length) {
+        return false
+    }
+
+    for(let index in targetednNode.arguments) {
+        if(targetednNode.arguments[index].type !== node.arguments[index].type) {
+            return false
+
+        }
+        if(targetednNode.arguments[index].type == 'SpreadElement') {
+            if(!matchSpreadElement(targetednNode.arguments[index], node.arguments[index])) {
+                return false
+
+            }
+        }else {
+            if(!matchExpression(targetednNode.arguments[index], node.arguments[index])) {
+                return false
+
+            }
+        }
+    }
+
     return true
 
+}
+function matchSpreadElement(targetednNode, node) {
+    if(!matchSpreadArgument(targetednNode.argument, node.argument)) {
+
+        return false
+
+    }
+    return true;
+}
+function matchSpreadArgument(targetednNode, node) {
+    if(targetednNode.type !== node.type) {
+        return false
+    }
+    switch(spreadArgument[targetednNode.type]) {
+        case 'Identifier':
+            if(!matchIdentifier(targetednNode, node)) {
+                return false
+
+            }
+            break;
+        case 'SpreadElement':
+            if(!matchSpreadElement(targetednNode, node)) {
+                return false
+
+            }
+            break;
+        case 'BindingPattern':
+            if(!matchBindingPattern(targetednNode, node)) {
+                return false
+
+            }
+            break;
+        case 'Expression':
+            if(!matchExpression(targetednNode, node)) {
+                return false
+
+            }
+            break;
+        case 'PropertyName':
+            if(!matchPropertyName(targetednNode, node)) {
+                return false
+
+            }
+            break;
+        
+    }
 }
 function matchChainExpression(targetednNode, node){
     return true
@@ -650,6 +738,26 @@ function matchClassDeclaration(targetednNode, node){
 
 }
 function matchFunctionExpression(targetednNode, node){
+    if(targetednNode.generator!==node.generator){
+        return false
+    }
+    if(targetednNode.async!==node.async){
+        return false
+    }
+    if(targetednNode.params.length > node.params.length) {
+        return false 
+    }
+    for(let index in targetednNode.params) {
+        if(!matchParameter(targetednNode.params[index],node.params[index])) {
+            return false
+        }
+    }
+    if(targetednNode.body){
+        if(!matchBlockStatement(targetednNode.body,node.body)) {
+            return false
+        }
+    }
+
     return true
 
 }
@@ -806,7 +914,31 @@ function matchSuper(targetednNode,node) {
     return true
     
  }
-function matchTemplateLiteral(targetednNode,node) {
+ function matchTemplateElement(targetedNode,node){
+    if(targetedNode.tail!==node.tail){
+        return false
+    }
+    if(targetedNode.value.raw!==node.value.raw){
+        return false
+    }
+    if(targetedNode.value.cooked!==node.value.cooked){
+        return false
+    }
+    return true
+ }
+function matchTemplateLiteral(targetedNode,node) {
+    // quasis
+    for(let index in targetedNode.quasis){
+        if(!matchTemplateElement(targetedNode.quasis[index],node.quasis[index])){
+            return false
+        }
+    }
+    // expressions
+    for (let index in targetedNode.expressions){
+        if(!matchExpression(targetedNode.expressions[index],node.expressions[index])){
+            return false
+        }
+    }
     return true
     
  }
@@ -872,7 +1004,7 @@ function matchExpression(targetednNode,node) {
                 return false;
             }
             break;  
-        case 'SequenceExpression':
+        case 'SequenceExpression': // skipped
             if(!matchSequenceExpression(targetednNode,node)) {
                 return false;
             }
