@@ -11,7 +11,7 @@ import parseRule from './rules_parser/rules_parser.js'
 export default function hanter(){
     const rules = getRules();
     for(let rule of rules) {
-        rule = parseRule(rules)
+        rule = parseRule(rule)
     }
     const sourceFiles = getFiles('./', parseConfig())
     console.log(sourceFiles)

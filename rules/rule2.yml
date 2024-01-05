@@ -1,0 +1,6 @@
+id: anas-nora-multi 
+type: 1
+patterns:
+    - pattern: "const x = `sum is ${sum(1 + 2)} and minus is ${sub(2, 1)}`;"     
+    - pattern: "const x = 10"     
+message: "Avoid insecure deserialization using pickle.loads"
