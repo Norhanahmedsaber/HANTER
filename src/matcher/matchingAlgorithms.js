@@ -5,6 +5,8 @@ import literalExpression from './definitions/literalExpression'
 import statement from './definitions/statement'
 import restElement from './definitions/restElement'
 import spreadArgument from "./definitions/spreadArgument"
+import variableDeclaratorId from "./definitions/variableDeclaratorId"
+import property from "./definitions/property"
 function matchVariableDeclaration(targetednNode, node) {
 
     // Kind Checking
@@ -34,9 +36,19 @@ function matchVariableDeclarator(targetednNode, node) {
         return false
     }
     // id Checking
-    switch(targetednNode.id.type) {
+    switch(variableDeclaratorId[targetednNode.id.type]) {
         case 'Identifier': 
             if(!matchIdentifier(targetednNode.id, node.id)) {
+                return false
+            }
+            break;
+        case 'Expression':
+            if(!matchExpression(targetednNode.id, node.id)) {
+                return false
+            }
+            break;
+        case 'BindingPattern':
+            if(!matchBindingPattern(targetednNode.id, node.id)) {
                 return false
             }
             break;
@@ -197,6 +209,9 @@ function matchExportNamedDeclaration(targetednNode, node) {
 }
 
 function matchFunctionDeclaration(targetednNode, node) {
+    if(!matchFunctionDeclarationBase(targetednNode,node)){
+        return false
+    }
     return true
 }
 
@@ -544,6 +559,26 @@ function matchRestElement(targtedNode,node){
 }
 
 function matchBindingPattern(targetednNode, node) {
+    if(targetednNode.type !== node.type) {
+        return false
+    }
+    switch(targetednNode.type) {
+        case 'Identifier':
+            if(!matchIdentifier(targetednNode, node)) {
+                return false
+            }
+            break;
+        case 'ArrayPattern':
+            if(!matchArrayPattern(targetednNode, node)) {
+                return false
+            }
+            break;
+        case 'ObjectPattern':
+            if(!matchObjectPattern(targetednNode, node)) {
+                return false
+            }
+            break;
+    }
     return true
 
 }
@@ -677,7 +712,6 @@ function matchCallExpression(targetednNode, node){
 }
 function matchSpreadElement(targetednNode, node) {
     if(!matchSpreadArgument(targetednNode.argument, node.argument)) {
-
         return false
 
     }
@@ -720,6 +754,7 @@ function matchSpreadArgument(targetednNode, node) {
             break;
         
     }
+    return true
 }
 function matchChainExpression(targetednNode, node){
     return true
@@ -738,6 +773,13 @@ function matchClassDeclaration(targetednNode, node){
 
 }
 function matchFunctionExpression(targetednNode, node){
+    if(!matchFunctionDeclarationBase(targetednNode,node)){
+        return false
+    }
+    return true
+
+}
+function matchFunctionDeclarationBase(targetednNode,node){
     if(targetednNode.generator!==node.generator){
         return false
     }
@@ -757,9 +799,7 @@ function matchFunctionExpression(targetednNode, node){
             return false
         }
     }
-
     return true
-
 }
 function matchLiteralExpression(targetednNode, node){
     if(targetednNode.type !== node.type) {
@@ -780,8 +820,47 @@ function matchLiteralExpression(targetednNode, node){
     return true
 }
 function matchMemberExpression(targetednNode, node){
+    // object
+    if(targetednNode.object.type !== node.object.type) {
+        return false
+    }
+    switch(targetednNode.object.type) {
+        case 'Super':
+            if(!matchSuper(targetednNode.object, node.object)) {
+                return false
+            }
+            break;
+        case 'Expression':
+            if(!matchExpression(targetednNode.object, node.object)) {
+                return false
+            }
+    }
+
+    // property 
+    if(targetednNode.property.type !== node.property.type) {
+        return false
+    }
+    switch(targetednNode.property.type) {
+        case 'PrivateIdentifier':
+            if(!matchPrivateIdentifier(targetednNode.property, node.property)) {
+                return false
+            }
+            break;
+        case 'Expression':
+            if(!matchExpression(targetednNode.property, node.property)) {
+                return false
+            }
+    }
     return true
 
+}
+function matchPrivateIdentifier(targtedNode, node) {
+    
+    if(targtedNode.name !== node.name) {
+        return false
+    }
+    
+    return true
 }
 function matchPrimaryExpression(targetednNode, node){
     switch(primaryExpression[targetednNode.type]) {
@@ -867,11 +946,41 @@ function matchPrimaryExpression(targetednNode, node){
     }
     return true
 }
-function matchArrayExpression(targetednNode,node) {
+function matchArrayExpression(targetedNode,node) {
+    for(let index in targetedNode.elements){
+        if(targetedNode.elements[index] !== null && node.elements[index] !== null)
+        {
+            if(!node.elements[index]) {
+                return false
+            }
+            if(targetedNode.elements[index].type === node.elements[index].type)
+            switch (targetedNode.elements[index].type){
+                case 'SpreadElement':
+                    if(!matchSpreadElement(targetedNode.elements[index],node.elements[index])){
+                        return false
+                    } 
+                    break;
+                default:
+                    if(!matchExpression(targetedNode.elements[index],node.elements[index])){
+                        return false
+                    }
+                    break;
+            }
+        }
+
+    }
     return true
     
  }
-function matchArrayPattern(targetednNode,node) {
+function matchArrayPattern(targetedNode,node) {
+    for(let index in targetedNode.elements){
+        if(node.elements[index] == null ){
+            return false
+        }
+        if(!matchExpression(targetedNode.elements[index],node.elements[index])){
+            return false 
+        }
+    }
     return true
     
  }
@@ -906,7 +1015,146 @@ function matchObjectExpression(targetednNode,node) {
     return true
     
  }
-function matchObjectPattern(targetednNode,node) {
+function matchMethodDefinition(targetednNode,node){
+    if(!matchMethodDefinitionBase(targetednNode,node)){
+        return false 
+    }  
+    return true
+
+}
+function matchMethodDefinitionBase(targetedNode,node){
+    //key 
+    if(targetedNode.key.type && node.key.type){
+        if(targetedNode.key.type !== node.key.type){
+            return false
+        }
+        switch(targetedNode.key.type){
+            case 'PrivateIdentifier':
+                if(!matchPrivateIdentifier(targetedNode.key,node.key)){
+                    return false
+                }
+                break;
+            default:
+                if(!matchExpression(targetedNode.key.node.key)){
+                    return false
+                }
+        }
+    }
+    // value
+    if(targetedNode.value.type !== node.value.type) {
+        return false
+    }
+    if(!matchFunctionExpression(targetedNode.value, node.value)) {
+        return false
+    }
+    // static
+    if(targetedNode.static !== node.static) {
+        return false
+
+    }
+    // kind
+    if(targetedNode.kind !== node.kind) {
+        return false
+
+    }
+    // Decorators
+    for(let index in targetedNode.decorators) {
+        if(!node.decorators[index]) {
+            return false
+        }
+        if(!matchDecorator(targetedNode.decorators[index], node.decorators[index])) {
+            return false
+        }
+    }
+    return true
+}
+function matchDecorator(targetednNode, node) {
+    if(!matchLeftHandSideExpression(targetednNode.expression, node.expression)) {
+        return false
+
+    }
+    return true
+}
+function matchProperty(targetednNode,node){
+    // computed method shorthand are skipped due to our ignorance
+    // key
+    if(!matchExpression(targetednNode.key, node.key)) {
+        return false
+    }
+    // value
+    if(targetednNode.value.type !== node.value.type) {
+        return false
+    }
+    switch(property[targetednNode.value.type]) {
+        case "Identifier":
+            if(!matchIdentifier(targetednNode.value, node.value)) {
+                return false
+            }
+            break
+            case "AssignmentPattern":
+                if(!matchAssignmentPattern(targetednNode.value, node.value)) {
+                    return false
+                }
+                break
+                case "Expression":
+                    if(!matchExpression(targetednNode.value, node.value)) {
+                        return false
+                    }
+                    break
+                    case "BindinPattern":
+                        if(!matchBindingPattern(targetednNode.value, node.value)) {
+                            return false
+                        }
+                        break
+                    }
+    // kind
+    if(targetednNode.kind !== node.kind) {
+        return false
+    }
+    return true
+}
+function matchObjectLiteralElementLike(targetedNode,node){
+    if(targetedNode.type!==node.type){
+        return false
+    }
+    switch(targetedNode.type){
+        case 'MethodDefinition':
+            if(!matchMethodDefinition(targetedNode,node)){
+                return false
+            }
+            break;
+        case 'Property':
+            if(!matchProperty(targetedNode, node)) {
+                return false
+            }
+            break;
+        case 'RestElement':
+            if(!matchRestElement(targetedNode, node)) {
+                return false
+            }
+            break;
+        case 'SpreadElement':
+            if(!matchSpreadElement(targetedNode, node)) {
+                return false
+            }
+            break;
+        
+    }
+    return true
+} 
+function matchObjectPattern(targetedNode,node) {
+    for (let targetedProperty of targetedNode.properties){
+        let found = false
+        for(let nodeProperty of node.properties) {
+            if(matchObjectLiteralElementLike(targetedProperty, nodeProperty)){
+                found = true
+                break;
+            }
+        }
+        if(!found) {
+            return false
+        }
+    }
     return true
     
  }
@@ -947,6 +1195,13 @@ function matchThisExpression(targetednNode,node) {
     
  }
 function matchTaggedTemplateExpression(targetednNode, node){
+    if(!matchExpression(targetednNode.tag, node.tag)) {
+        return false
+    }
+    if(!matchTemplateLiteral(targetednNode.quasi, node.quasi)) {
+        return false
+        
+    }
     return true
     
 }

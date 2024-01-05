@@ -1,8 +1,6 @@
 import { parseScript } from '../meryiah/src/meriyah.js';
 import AbstractSyntaxTree from 'abstract-syntax-tree';
 export default function parseRule(rule) {
-    // get first rule --input is array--
-    rule = rule[0]
     for (let key of Object.keys(rule)) {
         if ( key == "pattern" || key == "pattern-not")
         {
