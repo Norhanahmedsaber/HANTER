@@ -3,7 +3,7 @@ export default function evaluate(logicObject) {
     if (logicObject.type === 'pattern') {
         return logicObject.value;
     }
-
+    
     // Recursive case: evaluate each element in the 'value' array
     const evaluatedValues = logicObject.value.map(evaluate);
 

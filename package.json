@@ -1,6 +1,6 @@
 {
   "name": "hanter",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "SAST Tool For Javascript",
   "main": "bin/index.js",
   "scripts": {

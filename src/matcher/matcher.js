@@ -1,4 +1,3 @@
-import parseRule from "../rules_parser/rules_parser.js"
 import AbstractSyntaxTree from 'abstract-syntax-tree'
 import evaluate from "./evaluate.js"
 import matchTypes from './matchingAlgorithms.js'
@@ -13,12 +12,12 @@ function matchRule({name:fileName, ast}, rule, reports) {
     console.log(rule.id, evaluate(logicBlock))
 }
 
-function matchPattern(ast, pattern) {
+function matchPattern(fileAST, pattern) {
 
-    // Add Check to pattern-not 
+    // TODO Add Check to pattern-not 
     const targetednNode = pattern.pattern.body[0]
     let match = false
-    AbstractSyntaxTree.walk(ast, (node) => {
+    AbstractSyntaxTree.walk(fileAST, (node) => {
         if(node.type === targetednNode.type) {
             if(matchTypes[targetednNode.type](targetednNode, node)) {
                 match = true
