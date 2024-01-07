@@ -7,6 +7,7 @@ import restElement from './definitions/restElement'
 import spreadArgument from "./definitions/spreadArgument"
 import variableDeclaratorId from "./definitions/variableDeclaratorId"
 import property from "./definitions/property"
+import { match } from "abstract-syntax-tree"
 function matchVariableDeclaration(targetedNode, node) {
 
     // Kind Checking
@@ -52,8 +53,7 @@ function matchVariableDeclarator(targetedNode, node) {
                 return false
             }
             break;
-        // TODO Binding Patterns
-    }
+        }
     // init Type Checking
     if(targetedNode.init && !node.init) {
         return false
@@ -409,6 +409,20 @@ function matchForInitialiser(targetedNode, node) {
     return true
 }
 function matchForOfStatement(targetedNode, node) {
+    //left
+    if(!matchForInitialiser(targetedNode.left,node.left))
+    //right
+    if(!matchExpression(targetedNode.right,node.right)){
+        return false
+    }
+    //body
+    if(!matchStatement(targetedNode.body,node.body)){
+        return false
+    }
+    //await
+    if(targetedNode.await!==node.await){
+        return false
+    }
     return true
 }
 
