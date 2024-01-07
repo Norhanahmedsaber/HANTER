@@ -5,18 +5,20 @@ import literalExpression from './definitions/literalExpression'
 import statement from './definitions/statement'
 import restElement from './definitions/restElement'
 import spreadArgument from "./definitions/spreadArgument"
-function matchVariableDeclaration(targetednNode, node) {
+import variableDeclaratorId from "./definitions/variableDeclaratorId"
+import property from "./definitions/property"
+function matchVariableDeclaration(targetedNode, node) {
 
     // Kind Checking
-    if(node.kind !== targetednNode.kind) {
+    if(node.kind !== targetedNode.kind) {
         return false
     }
 
     // Declarations Checking
-    if(targetednNode.declarations.length > node.declarations.length) {
+    if(targetedNode.declarations.length > node.declarations.length) {
         return false
     }
-    for(let targetedVariableDeclarator of targetednNode.declarations) {
+    for(let targetedVariableDeclarator of targetedNode.declarations) {
         let variableDeclaratorFound = false
         for(let nodeVariableDeclarator of node.declarations) {
             variableDeclaratorFound = matchVariableDeclarator(targetedVariableDeclarator,nodeVariableDeclarator)
@@ -28,64 +30,74 @@ function matchVariableDeclaration(targetednNode, node) {
     }
     return true
 }
-function matchVariableDeclarator(targetednNode, node) {
+function matchVariableDeclarator(targetedNode, node) {
     // id Type Checking
-    if(targetednNode.id.type !== node.id.type) {
+    if(targetedNode.id.type !== node.id.type) {
         return false
     }
     // id Checking
-    switch(targetednNode.id.type) {
+    switch(variableDeclaratorId[targetedNode.id.type]) {
         case 'Identifier': 
-            if(!matchIdentifier(targetednNode.id, node.id)) {
+            if(!matchIdentifier(targetedNode.id, node.id)) {
+                return false
+            }
+            break;
+        case 'Expression':
+            if(!matchExpression(targetedNode.id, node.id)) {
+                return false
+            }
+            break;
+        case 'BindingPattern':
+            if(!matchBindingPattern(targetedNode.id, node.id)) {
                 return false
             }
             break;
         // TODO Binding Patterns
     }
     // init Type Checking
-    if(targetednNode.init && !node.init) {
+    if(targetedNode.init && !node.init) {
         return false
     }
-    if(targetednNode.init && node.init){
-        if(targetednNode.init.type !== node.init.type) {
+    if(targetedNode.init && node.init){
+        if(targetedNode.init.type !== node.init.type) {
             return false
         }
         
-        if(!matchExpression(targetednNode.init,node.init)) {
+        if(!matchExpression(targetedNode.init,node.init)) {
             return false
         }
     }
     return true
 }
-function matchIdentifier(targetednNode, node) {
-    return targetednNode.name === node.name
+function matchIdentifier(targetedNode, node) {
+    return targetedNode.name === node.name
 }
-function matchArrowFunctionExpression(targetednNode,node) {
-    if(targetednNode.expression!==node.expression) {
+function matchArrowFunctionExpression(targetedNode,node) {
+    if(targetedNode.expression!==node.expression) {
         return false 
     }
-    if(targetednNode.async!==node.async) {
+    if(targetedNode.async!==node.async) {
         return false 
     }
-    if(targetednNode.params.length > node.params.length) {
+    if(targetedNode.params.length > node.params.length) {
         return false 
     }
     // Params
-    for(let index in targetednNode.params) {
-        if(!matchParameter(targetednNode.params[index],node.params[index])) {
+    for(let index in targetedNode.params) {
+        if(!matchParameter(targetedNode.params[index],node.params[index])) {
             return false
         }
     }
     // Body
-    if(targetednNode.body.type !== node.body.type) {
+    if(targetedNode.body.type !== node.body.type) {
         return false
     }
-    if(targetednNode.body.type === 'BlockStatement') {
-        if(!matchBlockStatement(targetednNode.body, node.body)) {
+    if(targetedNode.body.type === 'BlockStatement') {
+        if(!matchBlockStatement(targetedNode.body, node.body)) {
             return false
         }
     }else {
-        if(!matchExpression(targetednNode.body, node.body)) {
+        if(!matchExpression(targetedNode.body, node.body)) {
             return false
         }
     }
@@ -116,386 +128,390 @@ function matchBlockStatement(targetedNode, node) {
     return true;
 }
 
-function matchBreakStatement(targetednNode, node) {
+function matchBreakStatement(targetedNode, node) {
+    
     return true
 }
-function matchContinueStatement(targetednNode, node) {
-    return true
-}
-
-function matchDebuggerStatement(targetednNode, node) {
+function matchContinueStatement(targetedNode, node) {
     return true
 }
 
-function matchEmptyStatement(targetednNode, node) {
+function matchDebuggerStatement(targetedNode, node) {
     return true
 }
 
-function matchExpressionStatement(targetednNode, node) {
+function matchEmptyStatement(targetedNode, node) {
     return true
 }
 
-function matchIfStatement(targetednNode, node) {
+function matchExpressionStatement(targetedNode, node) {
+    return true
+}
+
+function matchIfStatement(targetedNode, node) {
     // test
-    if(!matchExpression(targetednNode.test, node.test)) {
+    if(!matchExpression(targetedNode.test, node.test)) {
         return false
     }
     // consquent
-    if(!matchStatement(targetednNode.consequent, node.consequent)) {
+    if(!matchStatement(targetedNode.consequent, node.consequent)) {
         return false
     }
     // alternate
-    if(targetednNode.alternate && !node.alternate) {
+    if(targetedNode.alternate && !node.alternate) {
         return false
     }
-    if(targetednNode.alternate && node.alternate) {
-        if(!matchStatement(targetednNode.alternate, node.alternate)) {
+    if(targetedNode.alternate && node.alternate) {
+        if(!matchStatement(targetedNode.alternate, node.alternate)) {
             return false
         }
     }
     return true
 }
 
-function matchImportDeclaration(targetednNode, node) {
+function matchImportDeclaration(targetedNode, node) {
     return true
 }
 
-function matchLabeledStatement(targetednNode, node) {
+function matchLabeledStatement(targetedNode, node) {
     return true
 }
 
-function matchReturnStatement(targetednNode, node) {
+function matchReturnStatement(targetedNode, node) {
     return true
 }
 
-function matchSwitchStatement(targetednNode, node) {
+function matchSwitchStatement(targetedNode, node) {
     return true
 }
 
-function matchThrowStatement(targetednNode, node) {
+function matchThrowStatement(targetedNode, node) {
     return true
 }
 
-function matchTryStatement(targetednNode, node) {
+function matchTryStatement(targetedNode, node) {
     return true
 }
 
-function matchWithStatement(targetednNode, node) {
+function matchWithStatement(targetedNode, node) {
     return true
 }
 
-function matchExportDefaultDeclaration(targetednNode, node) {
+function matchExportDefaultDeclaration(targetedNode, node) {
     return true
 }
 
-function matchExportAllDeclaration(targetednNode, node) {
+function matchExportAllDeclaration(targetedNode, node) {
     return true
 }
 
-function matchExportNamedDeclaration(targetednNode, node) {
+function matchExportNamedDeclaration(targetedNode, node) {
     return true
 }
 
-function matchFunctionDeclaration(targetednNode, node) {
-    return true
-}
-
-function matchDoWhileStatement(targetednNode, node) {
-    return true
-}
-
-function matchForInStatement(targetednNode, node) {
-    return true
-}
-
-function matchForOfStatement(targetednNode, node) {
-    return true
-}
-
-function matchForStatement(targetednNode, node) {
-    return true
-}
-
-function matchWhileStatement(targetednNode, node) {
-    return true
-}
-
-
-
-function matchStatement(targetednNode, node) {
-    if(targetednNode.type !== node.type) {
+function matchFunctionDeclaration(targetedNode, node) {
+    if(!matchFunctionDeclarationBase(targetedNode,node)){
         return false
     }
-    switch (statement[targetednNode.type]) {
+    return true
+}
+
+function matchDoWhileStatement(targetedNode, node) {
+    return true
+}
+
+function matchForInStatement(targetedNode, node) {
+    return true
+}
+
+function matchForOfStatement(targetedNode, node) {
+    return true
+}
+
+function matchForStatement(targetedNode, node) {
+    return true
+}
+
+function matchWhileStatement(targetedNode, node) {
+    return true
+}
+
+
+
+function matchStatement(targetedNode, node) {
+    if(targetedNode.type !== node.type) {
+        return false
+    }
+    switch (statement[targetedNode.type]) {
         case 'BlockStatement':
-            if(!matchBlockStatement(targetednNode, node)) {
+            if(!matchBlockStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'IfStatement':
-            if(!matchIfStatement(targetednNode, node)) {
+            if(!matchIfStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'BreakStatement':
-            if(!matchBreakStatement(targetednNode, node)) {
+            if(!matchBreakStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ContinueStatement':
-            if(!matchContinueStatement(targetednNode, node)) {
+            if(!matchContinueStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'DebuggerStatement':
-            if(!matchDebuggerStatement(targetednNode, node)) {
+            if(!matchDebuggerStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'EmptyStatement':
-            if(!matchEmptyStatement(targetednNode, node)) {
+            if(!matchEmptyStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ExpressionStatement':
-            if(!matchExpressionStatement(targetednNode, node)) {
+            if(!matchExpressionStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ImportDeclaration':
-            if(!matchImportDeclaration(targetednNode, node)) {
+            if(!matchImportDeclaration(targetedNode, node)) {
                 return false
             }
             break;
         case 'LabeledStatement':
-            if(!matchLabeledStatement(targetednNode, node)) {
+            if(!matchLabeledStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ReturnStatement':
-            if(!matchReturnStatement(targetednNode, node)) {
+            if(!matchReturnStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'SwitchStatement':
-            if(!matchSwitchStatement(targetednNode, node)) {
+            if(!matchSwitchStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ThrowStatement':
-            if(!matchThrowStatement(targetednNode, node)) {
+            if(!matchThrowStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'TryStatement':
-            if(!matchTryStatement(targetednNode, node)) {
+            if(!matchTryStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'VariableDeclaration':
-            if(!matchVariableDeclaration(targetednNode, node)) {
+            if(!matchVariableDeclaration(targetedNode, node)) {
                 return false
             }
             break;
         case 'WithStatement':
-            if(!matchWithStatement(targetednNode, node)) {
+            if(!matchWithStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ClassDeclaration':
-            if(!matchClassDeclaration(targetednNode, node)) {
+            if(!matchClassDeclaration(targetedNode, node)) {
                 return false
             }
             break;
         case 'ClassExpression':
-            if(!matchClassExpression(targetednNode, node)) {
+            if(!matchClassExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'ExportDefaultDeclaration':
-            if(!matchExportDefaultDeclaration(targetednNode, node)) {
+            if(!matchExportDefaultDeclaration(targetedNode, node)) {
                 return false
             }
             break;
         case 'ExportAllDeclaration':
-            if(!matchExportAllDeclaration(targetednNode, node)) {
+            if(!matchExportAllDeclaration(targetedNode, node)) {
                 return false
             }
             break;
         case 'ExportNamedDeclaration':
-            if(!matchExportNamedDeclaration(targetednNode, node)) {
+            if(!matchExportNamedDeclaration(targetedNode, node)) {
                 return false
             }
             break;
         case 'FunctionDeclaration':
-            if(!matchFunctionDeclaration(targetednNode, node)) {
+            if(!matchFunctionDeclaration(targetedNode, node)) {
                 return false
             }
             break;
         case 'DoWhileStatement':
-            if(!matchDoWhileStatement(targetednNode, node)) {
+            if(!matchDoWhileStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ForInStatement':
-            if(!matchForInStatement(targetednNode, node)) {
+            if(!matchForInStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ForOfStatement':
-            if(!matchForOfStatement(targetednNode, node)) {
+            if(!matchForOfStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'ForStatement':
-            if(!matchForStatement(targetednNode, node)) {
+            if(!matchForStatement(targetedNode, node)) {
                 return false
             }
             break;
         case 'WhileStatement':
-            if(!matchWhileStatement(targetednNode, node)) {
+            if(!matchWhileStatement(targetedNode, node)) {
                 return false
             }
             break;
     }
     return true
 }
-function matchArguments(targetednNode, node) {
-    if(targetednNode.length > node.length) {
+function matchArguments(targetedNode, node) {
+    if(targetedNode.length > node.length) {
         return false
     }
-    for(let index in targetednNode) {
-        if(!matchExpression(targetednNode[index], node[index])) {
+    for(let index in targetedNode) {
+        if(!matchExpression(targetedNode[index], node[index])) {
             return false
         }
     }
     return true
 }
-function matchParameter(targetednNode,node) {
-    if(targetednNode.type!==node.type) {
+function matchParameter(targetedNode,node) {
+    if(targetedNode.type!==node.type) {
         return false
     }
-    switch (targetednNode.type) {
+    switch (targetedNode.type) {
         case 'Identifier': 
-            if(!matchIdentifier(targetednNode,node)) {
+            if(!matchIdentifier(targetedNode,node)) {
                 return false
             }
             break;
         case 'AssignmentPattern' :
-            if(!matchAssignmentPattern(targetednNode,node)) {
+            if(!matchAssignmentPattern(targetedNode,node)) {
                 return false
             }
             break;
         case 'RestElement' : 
-        if(!matchRestElement(targetednNode,node)) {
+        if(!matchRestElement(targetedNode,node)) {
             return false
         }
         break;
         case 'ArrayPattern' :
-            if(!matchObjectPattern(targetednNode,node)) {
+            if(!matchObjectPattern(targetedNode,node)) {
                 return false
             }
             break;
         case 'ObjectPattern' : 
-        if(!matchArrayPattern(targetednNode,node)) {
+        if(!matchArrayPattern(targetedNode,node)) {
             return false
         }
         break;
     }
     return true
 }
-function matchAssignmentPattern(targetednNode,node) {
-    if(targetednNode.right && !node.right) {
+function matchAssignmentPattern(targetedNode,node) {
+    if(targetedNode.right && !node.right) {
         return false
     }
-    if(targetednNode.right) {
-        if(targetednNode.right.type!==node.right.type) {
+    if(targetedNode.right) {
+        if(targetedNode.right.type!==node.right.type) {
             return false
         }
-        if(!matchExpression(targetednNode, node)) {
+        if(!matchExpression(targetedNode, node)) {
             return false
         }
     }
-    if(targetednNode.left.type!==node.left.type) {
+    if(targetedNode.left.type!==node.left.type) {
         return false
     }
-    switch (targetednNode.left.type) {
+    switch (targetedNode.left.type) {
         case 'Identifier':
-            if(!matchIdentifier(targetednNode,node)) {
+            if(!matchIdentifier(targetedNode,node)) {
                 return false
             }
             break;
         case 'ArrayPattern':
-            if(!matchArrayPattern(targetednNode, node)) {
+            if(!matchArrayPattern(targetedNode, node)) {
                 return false
             }
             break;
         case 'ObjectPattern':
-            if(!matchObjectPattern(targetednNode,node)) {
+            if(!matchObjectPattern(targetedNode,node)) {
                 return false
             }
             break;
     }
     return true
 }
-function matchAssignmentExpression(targetednNode,node) {
+function matchAssignmentExpression(targetedNode,node) {
     // operator
-    if(targetednNode.operator !== node.operator) {
+    if(targetedNode.operator !== node.operator) {
         return false
     }
     // left
-    if(!matchExpression(targetednNode.left, node.left)) {
+    if(!matchExpression(targetedNode.left, node.left)) {
         return false
     }
     // right
-    if(!matchExpression(targetednNode.right, node.right)) {
+    if(!matchExpression(targetedNode.right, node.right)) {
         return false
     }
     return true
 }
-function matchBinaryExpression(targetednNode,node) {
+function matchBinaryExpression(targetedNode,node) {
     // operator
-    if(targetednNode.operator !== node.operator) {
+    if(targetedNode.operator !== node.operator) {
         return false
     }
     // left
-    if(!matchExpression(targetednNode.left, node.left)) {
+    if(!matchExpression(targetedNode.left, node.left)) {
         return false
     }
     // right
-    if(!matchExpression(targetednNode.right, node.right)) {
+    if(!matchExpression(targetedNode.right, node.right)) {
         return false
     }
     return true
 
 }
-function matchConditionalExpression(targetednNode,node) {
+function matchConditionalExpression(targetedNode,node) {
     // test
-    if(!matchExpression(targetednNode.test, node.test)) {
+    if(!matchExpression(targetedNode.test, node.test)) {
         return false
     }
     // consequent
-    if(!matchExpression(targetednNode.consequent, node.consequent)) {
+    if(!matchExpression(targetedNode.consequent, node.consequent)) {
         return false
     }
     // alternate
-    if(!matchExpression(targetednNode.alternate, node.alternate)) {
+    if(!matchExpression(targetedNode.alternate, node.alternate)) {
         return false
     }
     return true
 
 }
-function matchLogicalExpression(targetednNode,node) {
+function matchLogicalExpression(targetedNode,node) {
     // operator
-    if(targetednNode.operator !== node.operator) {
+    if(targetedNode.operator !== node.operator) {
         return false
     }
     // left
-    if(!matchExpression(targetednNode.left, node.left)) {
+    if(!matchExpression(targetedNode.left, node.left)) {
         return false
     }
     // right
-    if(!matchExpression(targetednNode.right, node.right)) {
+    if(!matchExpression(targetedNode.right, node.right)) {
         return false
     }
     return true
@@ -543,20 +559,40 @@ function matchRestElement(targtedNode,node){
 
 }
 
-function matchBindingPattern(targetednNode, node) {
+function matchBindingPattern(targetedNode, node) {
+    if(targetedNode.type !== node.type) {
+        return false
+    }
+    switch(targetedNode.type) {
+        case 'Identifier':
+            if(!matchIdentifier(targetedNode, node)) {
+                return false
+            }
+            break;
+        case 'ArrayPattern':
+            if(!matchArrayPattern(targetedNode, node)) {
+                return false
+            }
+            break;
+        case 'ObjectPattern':
+            if(!matchObjectPattern(targetedNode, node)) {
+                return false
+            }
+            break;
+    }
     return true
 
 }
 
-function matchPropertyName(targetednNode, node) {
-    switch(targetednNode.type) {
+function matchPropertyName(targetedNode, node) {
+    switch(targetedNode.type) {
         case 'Identifier':
-            if(!matchIdentifier(targetednNode, node)) {
+            if(!matchIdentifier(targetedNode, node)) {
                 return false
             }
             break;
         case 'Literal':
-            if(!matchLiteral(targetednNode, node)) {
+            if(!matchLiteral(targetedNode, node)) {
                 return false
             }
             break;
@@ -566,106 +602,106 @@ function matchPropertyName(targetednNode, node) {
     
 }
 
-function matchSequenceExpression(targetednNode,node){
+function matchSequenceExpression(targetedNode,node){
     return true
 
 }
-function matchAwaitExpression(targetednNode,node){ // moseeba our meriyah doesnt read await as reserved word
-    if(!matchExpression(targetednNode.argument, node.argument)) {
+function matchAwaitExpression(targetedNode,node){ // moseeba our meriyah doesnt read await as reserved word
+    if(!matchExpression(targetedNode.argument, node.argument)) {
         return false
     }
     return true
 }
 
-function matchLeftHandSideExpression(targetednNode,node){
-    switch(leftHandSideExpression[targetednNode.type]) {
+function matchLeftHandSideExpression(targetedNode,node){
+    switch(leftHandSideExpression[targetedNode.type]) {
         case 'CallExpression':
-            if(!matchCallExpression(targetednNode, node)) {
+            if(!matchCallExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'ChainExpression': // skipped
-            if(!matchChainExpression(targetednNode, node)) {
+            if(!matchChainExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'ImportExpression': // skipped
-            if(!matchImportExpression(targetednNode, node)) {
+            if(!matchImportExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'ClassExpression': // skipped
-            if(!matchClassExpression(targetednNode, node)) {
+            if(!matchClassExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'ClassDeclaration': // skipped
-            if(!matchClassDeclaration(targetednNode, node)) {
+            if(!matchClassDeclaration(targetedNode, node)) {
                 return false
             }
             break;
         case 'FunctionExpression':
-            if(!matchFunctionExpression(targetednNode, node)) {
+            if(!matchFunctionExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'LiteralExpression': // NotNode
-            if(!matchLiteralExpression(targetednNode, node)) {
+            if(!matchLiteralExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'MemberExpression':
-            if(!matchMemberExpression(targetednNode, node)) {
+            if(!matchMemberExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'PrimaryExpression': // NotNode
-            if(!matchPrimaryExpression(targetednNode, node)) {
+            if(!matchPrimaryExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'TaggedTemplateExpression':
-            if(!matchTaggedTemplateExpression(targetednNode, node)) {
+            if(!matchTaggedTemplateExpression(targetedNode, node)) {
                 return false
             }
             break;
     }
     return true
 }
-function matchCallExpression(targetednNode, node){
+function matchCallExpression(targetedNode, node){
     // callee
-    if(targetednNode.callee.type !== node.callee.type) {
+    if(targetedNode.callee.type !== node.callee.type) {
         return false
 
     }
-    if(targetednNode.type === 'Super') {
-        if(!matchSuper(targetednNode, node)) {
+    if(targetedNode.type === 'Super') {
+        if(!matchSuper(targetedNode, node)) {
             return false
         }
     }
     else {
-        if(!matchExpression(targetednNode.callee, node.callee)) {
+        if(!matchExpression(targetedNode.callee, node.callee)) {
             return false
         }
     }
     
     // arguments
-    if(targetednNode.arguments.length > node.arguments.length) {
+    if(targetedNode.arguments.length > node.arguments.length) {
         return false
     }
 
-    for(let index in targetednNode.arguments) {
-        if(targetednNode.arguments[index].type !== node.arguments[index].type) {
+    for(let index in targetedNode.arguments) {
+        if(targetedNode.arguments[index].type !== node.arguments[index].type) {
             return false
 
         }
-        if(targetednNode.arguments[index].type == 'SpreadElement') {
-            if(!matchSpreadElement(targetednNode.arguments[index], node.arguments[index])) {
+        if(targetedNode.arguments[index].type == 'SpreadElement') {
+            if(!matchSpreadElement(targetedNode.arguments[index], node.arguments[index])) {
                 return false
 
             }
         }else {
-            if(!matchExpression(targetednNode.arguments[index], node.arguments[index])) {
+            if(!matchExpression(targetedNode.arguments[index], node.arguments[index])) {
                 return false
 
             }
@@ -675,242 +711,468 @@ function matchCallExpression(targetednNode, node){
     return true
 
 }
-function matchSpreadElement(targetednNode, node) {
-    if(!matchSpreadArgument(targetednNode.argument, node.argument)) {
-
+function matchSpreadElement(targetedNode, node) {
+    if(!matchSpreadArgument(targetedNode.argument, node.argument)) {
         return false
 
     }
     return true;
 }
-function matchSpreadArgument(targetednNode, node) {
-    if(targetednNode.type !== node.type) {
+function matchSpreadArgument(targetedNode, node) {
+    if(targetedNode.type !== node.type) {
         return false
     }
-    switch(spreadArgument[targetednNode.type]) {
+    switch(spreadArgument[targetedNode.type]) {
         case 'Identifier':
-            if(!matchIdentifier(targetednNode, node)) {
+            if(!matchIdentifier(targetedNode, node)) {
                 return false
 
             }
             break;
         case 'SpreadElement':
-            if(!matchSpreadElement(targetednNode, node)) {
+            if(!matchSpreadElement(targetedNode, node)) {
                 return false
 
             }
             break;
         case 'BindingPattern':
-            if(!matchBindingPattern(targetednNode, node)) {
+            if(!matchBindingPattern(targetedNode, node)) {
                 return false
 
             }
             break;
         case 'Expression':
-            if(!matchExpression(targetednNode, node)) {
+            if(!matchExpression(targetedNode, node)) {
                 return false
 
             }
             break;
         case 'PropertyName':
-            if(!matchPropertyName(targetednNode, node)) {
+            if(!matchPropertyName(targetedNode, node)) {
                 return false
 
             }
             break;
         
     }
+    return true
 }
-function matchChainExpression(targetednNode, node){
+function matchChainExpression(targetedNode, node){
     return true
 
 }
-function matchImportExpression(targetednNode, node){
+function matchImportExpression(targetedNode, node){
     return true
 
 }
-function matchClassExpression(targetednNode, node){
+function matchClassExpression(targetedNode, node){
     return true
 
 }
-function matchClassDeclaration(targetednNode, node){
+function matchClassDeclaration(targetedNode, node){
     return true
 
 }
-function matchFunctionExpression(targetednNode, node){
-    if(targetednNode.generator!==node.generator){
+function matchFunctionExpression(targetedNode, node){
+    if(!matchFunctionDeclarationBase(targetedNode,node)){
         return false
     }
-    if(targetednNode.async!==node.async){
+    return true
+
+}
+function matchFunctionDeclarationBase(targetedNode,node){
+    if(targetedNode.generator!==node.generator){
         return false
     }
-    if(targetednNode.params.length > node.params.length) {
+    if(targetedNode.async!==node.async){
+        return false
+    }
+    if(targetedNode.params.length > node.params.length) {
         return false 
     }
-    for(let index in targetednNode.params) {
-        if(!matchParameter(targetednNode.params[index],node.params[index])) {
+    for(let index in targetedNode.params) {
+        if(!matchParameter(targetedNode.params[index],node.params[index])) {
             return false
         }
     }
-    if(targetednNode.body){
-        if(!matchBlockStatement(targetednNode.body,node.body)) {
+    if(targetedNode.body){
+        if(!matchBlockStatement(targetedNode.body,node.body)) {
             return false
         }
     }
-
     return true
-
 }
-function matchLiteralExpression(targetednNode, node){
-    if(targetednNode.type !== node.type) {
+function matchLiteralExpression(targetedNode, node){
+    if(targetedNode.type !== node.type) {
         return false
     }
-    switch(literalExpression[targetednNode.type]) {
+    switch(literalExpression[targetedNode.type]) {
         case 'Literal':
-            if(!matchLiteral(targetednNode, node)) {
+            if(!matchLiteral(targetedNode, node)) {
                 return false
             }
             break;
         case 'TemplateLiteral':
-            if(!matchTemplateLiteral(targetednNode, node)) {
+            if(!matchTemplateLiteral(targetedNode, node)) {
                 return false
             }
             break;
     }
     return true
 }
-function matchMemberExpression(targetednNode, node){
+function matchMemberExpression(targetedNode, node){
+    // object
+    if(targetedNode.object.type !== node.object.type) {
+        return false
+    }
+    switch(targetedNode.object.type) {
+        case 'Super':
+            if(!matchSuper(targetedNode.object, node.object)) {
+                return false
+            }
+            break;
+        case 'Expression':
+            if(!matchExpression(targetedNode.object, node.object)) {
+                return false
+            }
+    }
+
+    // property 
+    if(targetedNode.property.type !== node.property.type) {
+        return false
+    }
+    switch(targetedNode.property.type) {
+        case 'PrivateIdentifier':
+            if(!matchPrivateIdentifier(targetedNode.property, node.property)) {
+                return false
+            }
+            break;
+        case 'Expression':
+            if(!matchExpression(targetedNode.property, node.property)) {
+                return false
+            }
+    }
     return true
 
 }
-function matchPrimaryExpression(targetednNode, node){
-    switch(primaryExpression[targetednNode.type]) {
+function matchPrivateIdentifier(targtedNode, node) {
+    
+    if(targtedNode.name !== node.name) {
+        return false
+    }
+    
+    return true
+}
+function matchPrimaryExpression(targetedNode, node){
+    switch(primaryExpression[targetedNode.type]) {
         case 'ArrayExpression':
-            if(!matchArrayExpression(targetednNode, node)) {
+            if(!matchArrayExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'ArrayPattern':
-            if(!matchArrayPattern(targetednNode, node)) {
+            if(!matchArrayPattern(targetedNode, node)) {
                 return false
             }
             break;
         case 'ClassExpression':
-            if(!matchClassExpression(targetednNode, node)) {
+            if(!matchClassExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'FunctionExpression':
-            if(!matchFunctionExpression(targetednNode, node)) {
+            if(!matchFunctionExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'Identifier':
-            if(!matchIdentifier(targetednNode, node)) {
+            if(!matchIdentifier(targetedNode, node)) {
                 return false
             }
             break;
         case 'Import':
-            if(!matchImport(targetednNode, node)) {
+            if(!matchImport(targetedNode, node)) {
                 return false
             }
         case 'JSXElement':
-            if(!matchJSXElement(targetednNode, node)) {
+            if(!matchJSXElement(targetedNode, node)) {
                 return false
             }
             break;
         case 'JSXFragment':
-            if(!matchJSXFragment(targetednNode, node)) {
+            if(!matchJSXFragment(targetedNode, node)) {
                 return false
             }
             break;
         case 'JSXOpeningElement':
-            if(!matchJSXOpeningElement(targetednNode, node)) {
+            if(!matchJSXOpeningElement(targetedNode, node)) {
                 return false
             }
             break;
         case 'Literal':
-            if(!matchLiteral(targetednNode, node)) {
+            if(!matchLiteral(targetedNode, node)) {
                 return false
             }
             break;
         case 'MetaProperty':
-            if(!matchMetaProperty(targetednNode, node)) {
+            if(!matchMetaProperty(targetedNode, node)) {
                 return false
             }
             break;
         case 'ObjectExpression':
-            if(!matchObjectExpression(targetednNode, node)) {
+            if(!matchObjectExpression(targetedNode, node)) {
                 return false
             }
             break;
         case 'ObjectPattern':
-            if(!matchObjectPattern(targetednNode, node)) {
+            if(!matchObjectPattern(targetedNode, node)) {
                 return false
             }
             break;
         case 'Super':
-            if(!matchSuper(targetednNode, node)) {
+            if(!matchSuper(targetedNode, node)) {
                 return false
             }
             break;
         case 'TemplateLiteral':
-            if(!matchTemplateLiteral(targetednNode, node)) {
+            if(!matchTemplateLiteral(targetedNode, node)) {
                 return false
             }
             break;
         case 'ThisExpression':
-            if(!matchThisExpression(targetednNode, node)) {
+            if(!matchThisExpression(targetedNode, node)) {
                 return false
             }           
             break;
     }
     return true
 }
-function matchArrayExpression(targetednNode,node) {
+function matchArrayExpression(targetedNode,node) {
+    for(let index in targetedNode.elements){
+        if(targetedNode.elements[index] !== null && node.elements[index] !== null)
+        {
+            if(!node.elements[index]) {
+                return false
+            }
+            if(targetedNode.elements[index].type === node.elements[index].type)
+            switch (targetedNode.elements[index].type){
+                case 'SpreadElement':
+                    if(!matchSpreadElement(targetedNode.elements[index],node.elements[index])){
+                        return false
+                    } 
+                    break;
+                default:
+                    if(!matchExpression(targetedNode.elements[index],node.elements[index])){
+                        return false
+                    }
+                    break;
+            }
+        }
+
+    }
     return true
     
  }
-function matchArrayPattern(targetednNode,node) {
+function matchArrayPattern(targetedNode,node) {
+    for(let index in targetedNode.elements){
+        if(node.elements[index] == null ){
+            return false
+        }
+        if(!matchExpression(targetedNode.elements[index],node.elements[index])){
+            return false 
+        }
+    }
     return true
     
  }
-function matchImport(targetednNode,node) {
+function matchImport(targetedNode,node) {
     return true
     
  }
-function matchJSXElement(targetednNode,node) {
+function matchJSXElement(targetedNode,node) {
     return true
     
  }
-function matchJSXFragment(targetednNode,node) {
+function matchJSXFragment(targetedNode,node) {
     return true
     
  }
-function matchJSXOpeningElement(targetednNode,node) {
+function matchJSXOpeningElement(targetedNode,node) {
     return true
     
  }
-function matchLiteral(targetednNode,node) {
-    if(targetednNode.value !== node.value) {
+function matchLiteral(targetedNode,node) {
+    if(targetedNode.value !== node.value) {
         return false
     }
     return true
     
  }
-function matchMetaProperty(targetednNode,node) {
+function matchMetaProperty(targetedNode,node) {
     return true
     
  }
-function matchObjectExpression(targetednNode,node) {
+
+function matchObjectExpression(targetedNode,node) {
+    for (let targetedProperty of targetedNode.properties){
+        let found = false
+        for(let nodeProperty of node.properties) {
+            if(matchObjectLiteralElementLike(targetedProperty, nodeProperty)){
+                found = true
+                break;
+            }
+        }
+        if(!found) {
+            return false
+        }
+    }
     return true
     
  }
-function matchObjectPattern(targetednNode,node) {
+function matchMethodDefinition(targetedNode,node){
+    if(!matchMethodDefinitionBase(targetedNode,node)){
+        return false 
+    }  
+    return true
+
+}
+function matchMethodDefinitionBase(targetedNode,node){
+    //key 
+    if(targetedNode.key.type && node.key.type){
+        if(targetedNode.key.type !== node.key.type){
+            return false
+        }
+        switch(targetedNode.key.type){
+            case 'PrivateIdentifier':
+                if(!matchPrivateIdentifier(targetedNode.key,node.key)){
+                    return false
+                }
+                break;
+            default:
+                if(!matchExpression(targetedNode.key.node.key)){
+                    return false
+                }
+        }
+    }
+    // value
+    if(targetedNode.value.type !== node.value.type) {
+        return false
+    }
+    if(!matchFunctionExpression(targetedNode.value, node.value)) {
+        return false
+    }
+    // static
+    if(targetedNode.static !== node.static) {
+        return false
+
+    }
+    // kind
+    if(targetedNode.kind !== node.kind) {
+        return false
+
+    }
+    // Decorators
+    for(let index in targetedNode.decorators) {
+        if(!node.decorators[index]) {
+            return false
+        }
+        if(!matchDecorator(targetedNode.decorators[index], node.decorators[index])) {
+            return false
+        }
+    }
+    return true
+}
+function matchDecorator(targetedNode, node) {
+    if(!matchLeftHandSideExpression(targetedNode.expression, node.expression)) {
+        return false
+
+    }
+    return true
+}
+function matchProperty(targetedNode,node){
+    // computed method shorthand are skipped due to our ignorance
+    // key
+    if(!matchExpression(targetedNode.key, node.key)) {
+        return false
+    }
+    // value
+    if(targetedNode.value.type !== node.value.type) {
+        return false
+    }
+    switch(property[targetedNode.value.type]) {
+        case "Identifier":
+            if(!matchIdentifier(targetedNode.value, node.value)) {
+                return false
+            }
+            break
+            case "AssignmentPattern":
+                if(!matchAssignmentPattern(targetedNode.value, node.value)) {
+                    return false
+                }
+                break
+            case "Expression":
+                if(!matchExpression(targetedNode.value, node.value)) {
+                    return false
+                }
+                break
+            case "BindinPattern":
+                if(!matchBindingPattern(targetedNode.value, node.value)) {
+                    return false
+                }
+                break
+            }
+    // kind
+    if(targetedNode.kind !== node.kind) {
+        return false
+    }
+    return true
+}
+function matchObjectLiteralElementLike(targetedNode,node){
+    if(targetedNode.type!==node.type){
+        return false
+    }
+    switch(targetedNode.type){
+        case 'MethodDefinition':
+            if(!matchMethodDefinition(targetedNode,node)){
+                return false
+            }
+            break;
+        case 'Property':
+            if(!matchProperty(targetedNode, node)) {
+                return false
+            }
+            break;
+        case 'RestElement':
+            if(!matchRestElement(targetedNode, node)) {
+                return false
+            }
+            break;
+        case 'SpreadElement':
+            if(!matchSpreadElement(targetedNode, node)) {
+                return false
+            }
+            break;
+        
+    }
+    return true
+} 
+function matchObjectPattern(targetedNode,node) {
+    for (let targetedProperty of targetedNode.properties){
+        let found = false
+        for(let nodeProperty of node.properties) {
+            if(matchObjectLiteralElementLike(targetedProperty, nodeProperty)){
+                found = true
+                break;
+            }
+        }
+        if(!found) {
+            return false
+        }
+    }
     return true
     
  }
-function matchSuper(targetednNode,node) {
+function matchSuper(targetedNode,node) {
     return true
     
  }
@@ -942,96 +1204,104 @@ function matchTemplateLiteral(targetedNode,node) {
     return true
     
  }
-function matchThisExpression(targetednNode,node) {
+function matchThisExpression(targetedNode,node) {
     return true
     
  }
-function matchTaggedTemplateExpression(targetednNode, node){
-    return true
-    
-}
-
-function matchUnaryExpression(targetednNode,node){
-    return true
-    
-}
-function matchUpdateExpression(targetednNode,node){
-    
-    return true
-    
-}
-function matchYieldExpression(targetednNode,node){
-    return true
-    
-}
-
-function matchExpression(targetednNode,node) {
-    if(targetednNode.type !== node.type) {
+function matchTaggedTemplateExpression(targetedNode, node){
+    if(!matchExpression(targetedNode.tag, node.tag)) {
         return false
     }
-    switch (expression[targetednNode.type]) {
+    if(!matchTemplateLiteral(targetedNode.quasi, node.quasi)) {
+        return false
+        
+    }
+    return true
+    
+}
+
+function matchUnaryExpression(targetedNode,node){
+    return true
+    
+}
+
+function matchUpdateExpression(targetedNode,node){
+    return true
+    
+}
+function matchYieldExpression(targetedNode,node){
+    
+    return true
+    
+}
+
+function matchExpression(targetedNode,node) {
+    if(targetedNode.type !== node.type) {
+        return false
+    }
+    switch (expression[targetedNode.type]) {
         case 'ArrowFunctionExpression':
-            if(!matchArrowFunctionExpression(targetednNode,node)) {
+            if(!matchArrowFunctionExpression(targetedNode,node)) {
                 return false
             }
             break;
         case 'AssignmentExpression':
-            if(!matchAssignmentExpression(targetednNode,node)) {
+            if(!matchAssignmentExpression(targetedNode,node)) {
                 return false
             }
             break;
         case 'BinaryExpression':
-            if(!matchBinaryExpression(targetednNode,node)){
+            if(!matchBinaryExpression(targetedNode,node)){
                 return false
             }
             break;  
         case 'ConditionalExpression':
-            if(!matchConditionalExpression(targetednNode,node)) {
+            if(!matchConditionalExpression(targetedNode,node)) {
                 return false;
             }
             break;
         case 'LogicalExpression':
-            if(!matchLogicalExpression(targetednNode,node)) {
+            if(!matchLogicalExpression(targetedNode,node)) {
                 return false;
             }
             break;   
         case 'NewExpression':
-            if(!matchNewExpression(targetednNode,node)) {
+            if(!matchNewExpression(targetedNode,node)) {
                 return false;
             }
             break; 
         case 'RestElement':
-            if(!matchRestElement(targetednNode,node)) {
+            if(!matchRestElement(targetedNode,node)) {
                 return false;
             }
             break;  
         case 'SequenceExpression': // skipped
-            if(!matchSequenceExpression(targetednNode,node)) {
+            if(!matchSequenceExpression(targetedNode,node)) {
                 return false;
             }
             break; 
         case 'AwaitExpression':
-            if(!matchAwaitExpression(targetednNode,node)) {
+            if(!matchAwaitExpression(targetedNode,node)) {
                 return false;
             }
             break; 
         case 'LeftHandSideExpression': // NotNode
-            if(!matchLeftHandSideExpression(targetednNode,node)) {
+            if(!matchLeftHandSideExpression(targetedNode,node)) {
                 return false;
             }
             break; 
         case 'UnaryExpression':
-            if(!matchUnaryExpression(targetednNode,node)) {
+            if(!matchUnaryExpression(targetedNode,node)) {
                 return false;
             }
             break;  
         case 'UpdateExpression':
-            if(!matchUpdateExpression(targetednNode,node)) {
+            if(!matchUpdateExpression(targetedNode,node)) {
                 return false;
             }
             break;  
         case 'YieldExpression':
-            if(!matchYieldExpression(targetednNode,node)) {
+            if(!matchYieldExpression(targetedNode,node)) {
                 return false;
             }
             break;                

@@ -1,0 +1,5 @@
+id: arrayExpression
+type: 1
+patterns:
+    - pattern: "const z = [...y]"     
+message: "Avoid insecure deserialization using pickle.loads"

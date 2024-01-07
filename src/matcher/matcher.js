@@ -15,7 +15,9 @@ function matchRule({name:fileName, ast}, rule, reports) {
 function matchPattern(fileAST, pattern) {
 
     // TODO Add Check to pattern-not 
+    // console.log(pattern)
     const targetednNode = pattern.pattern.body[0]
+    // console.log(targetednNode)
     let match = false
     AbstractSyntaxTree.walk(fileAST, (node) => {
         if(node.type === targetednNode.type) {
