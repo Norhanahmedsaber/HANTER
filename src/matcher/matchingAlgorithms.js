@@ -363,7 +363,6 @@ function matchFunctionDeclaration(targetedNode, node) {
 
 function matchDoWhileStatement(targetedNode, node) {
     //test
-    console.log('nora')
     if(!matchExpression(targetedNode.test,node.test)){
         return false
     }
@@ -533,6 +532,19 @@ function matchStatement(targetedNode, node) {
                 return false
             }
             break;
+        case 'IterationStatement':
+            if(!matchIterationStatement(targetedNode, node)) {
+                return false
+            }
+            break
+    }
+    return true
+}
+function matchIterationStatement(targetedNode, node) {
+    if(targetedNode.type !== node.type) {
+        return false
+    }
+    switch(targetedNode.type) {
         case 'DoWhileStatement':
             if(!matchDoWhileStatement(targetedNode, node)) {
                 return false

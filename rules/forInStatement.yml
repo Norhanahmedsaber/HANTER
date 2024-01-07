@@ -1,5 +1,5 @@
 id: forInStatement 
 type: 1
 patterns:
-    - pattern: "const x = ()=>{for(let nora in nora) {console.log('ahmed')}}"     
+    - pattern: "const x = ()=>{for(let anas in nora) {console.log('ahmed')}}"     
 message: "Avoid insecure deserialization using pickle.loads"
