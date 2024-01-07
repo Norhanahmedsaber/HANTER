@@ -1,4 +1,4 @@
-const sourceCode = 'const {y, x} = anas()'
+const sourceCode = 'const x = {}'
 const node = {
   type: 'ExpressionStatement',
   expression: {
