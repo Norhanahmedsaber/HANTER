@@ -129,7 +129,18 @@ function matchBlockStatement(targetedNode, node) {
 }
 
 function matchBreakStatement(targetedNode, node) {
-    
+    if(targetedNode.label && node.label) {
+        if(targetedNode.label.type !== node.label.type) {
+            return false
+        }
+        switch(targetedNode.label.type) {
+            case 'Identifier':
+                if(!matchIdentifier(targetedNode.label, node.label)) {
+                    return false
+                }
+                break;
+        }
+    }
     return true
 }
 function matchContinueStatement(targetedNode, node) {
@@ -178,6 +189,19 @@ function matchLabeledStatement(targetedNode, node) {
 }
 
 function matchReturnStatement(targetedNode, node) {
+    if(targetedNode.argument && node.argument) {
+        if(targetedNode.argument.type !== node.argument.type) {
+            return false
+        }
+        if(!matchExpression(targetedNode.argument, node.argument)) {
+            return false
+        }
+    } else {
+        if(targetedNode.argument) {
+            return false
+        }
+    }
+    
     return true
 }
 
@@ -186,10 +210,69 @@ function matchSwitchStatement(targetedNode, node) {
 }
 
 function matchThrowStatement(targetedNode, node) {
+    if(!matchExpression(targetedNode.argument, node.argument)) {
+        return false
+
+    }
     return true
 }
 
 function matchTryStatement(targetedNode, node) {
+    // block
+    if(!matchBlockStatement(targetedNode.block, node.block)) {
+        return false
+    }
+    //handler
+    if(targetedNode.handler && node.handler) {
+        if(!matchCatchClause(targetedNode.handler, node.handler)) {
+            return false
+        }
+    }else {
+        if(targetedNode.handler) {
+            return false
+        }
+    }
+    // finalizer
+    if(targetedNode.finalizer && node.finalizer) {
+        if(!matchBlockStatement(targetedNode.finalizer, node.finalizer)) {
+            return false
+        }
+    }else {
+        if(targetedNode.finalizer) {
+            return false
+        }
+    }
+    return true
+}
+
+function matchCatchClause(targetedNode, node) {
+    // param
+    if(targetedNode.param && node.param) {
+        if(targetedNode.param.type !== node.param.type) {
+            return false
+        }
+        switch(targetedNode.param) {
+            case 'Identifier':
+                if(!matchIdentifier(targetedNode.param, node.param)) {
+                    return false
+                }
+                break;
+            default: // Binding Pattern
+                if(!matchBindingPattern(targetedNode.param, node.param)) {
+                    return false
+                }
+                break
+        }
+    }else {
+        if(targetedNode.param) {
+            return false
+        }
+    }
+    // body
+    if(!matchBlockStatement(targetedNode.body, node.body)) {
+        return false
+    }
+    
     return true
 }
 
@@ -221,9 +304,40 @@ function matchDoWhileStatement(targetedNode, node) {
 }
 
 function matchForInStatement(targetedNode, node) {
+    // left 
+    if(!matchForInitialiser(targetedNode.left, node.left)) {
+        return false
+    }
+
+    //right
+    if(!matchExpression(targetedNode.right, node.right)) {
+        return false
+    }
+
+    //body
+    if(!matchStatement(targetedNode.body, node.body)) {
+        return false
+    }
     return true
 }
-
+function matchForInitialiser(targetedNode, node) {
+    if(targetedNode.type !== node.type) {
+        return false
+    }
+    switch(targetedNode.type) {
+        case "VariableDeclaration":
+            if(!matchVariableDeclaration(targetedNode, node)) {
+                return false
+            }
+            break;
+        default: // Expression
+            if(!matchExpression(targetedNode, node)) {
+                return false
+            }
+            break;
+    }
+    return true
+}
 function matchForOfStatement(targetedNode, node) {
     return true
 }
