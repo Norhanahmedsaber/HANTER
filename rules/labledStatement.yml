@@ -1,0 +1,7 @@
+id: labeledStaement
+type: 1
+patterns:
+    - pattern: "const x =()=>{anas:{
+console.log(y)
+}} ;"     
+message: "Avoid insecure deserialization using pickle.loads"
