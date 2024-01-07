@@ -1,0 +1,5 @@
+id: returnStatement 
+type: 1
+patterns:
+    - pattern: "const x = () => {return 5}"     
+message: "Avoid insecure deserialization using pickle.loads"
