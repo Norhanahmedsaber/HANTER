@@ -1,4 +1,5 @@
-const sourceCode = 'const x = () => {try {console.log(x)} catch(e) {throw anas} finally {console.log(5)}}'
+
+const sourceCode = 'const x= ()=>{  var i = 0;do {i += 1;result += i + "";}while (i > 0 );}'
 const node = {
   type: 'ExpressionStatement',
   expression: {
@@ -13,5 +14,6 @@ const node = {
   }
 }
 console.log(require('abstract-syntax-tree').parse(sourceCode).body[0].declarations[0].init.body.body[0])
+
 // console.log(require('abstract-syntax-tree').generate(node))
 

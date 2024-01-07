@@ -144,6 +144,22 @@ function matchBreakStatement(targetedNode, node) {
     return true
 }
 function matchContinueStatement(targetedNode, node) {
+    if(targetedNode.label && node.label){
+        if(targetedNode.label!==node.label){
+            return false 
+        }
+        switch(targetedNode.label){
+        case "Identifier" :
+            if(!matchIdentifier(targetedNode.label,node.label)){
+                return false
+            } 
+            break ;
+        }
+    }else{
+        if(targetedNode.label){
+            return false
+        }
+    }
     return true
 }
 
@@ -156,6 +172,9 @@ function matchEmptyStatement(targetedNode, node) {
 }
 
 function matchExpressionStatement(targetedNode, node) {
+    if(!matchExpression(targetedNode.expression, node.expression)) {
+        return false
+    }
     return true
 }
 
@@ -185,6 +204,18 @@ function matchImportDeclaration(targetedNode, node) {
 }
 
 function matchLabeledStatement(targetedNode, node) {
+    //label
+    switch (targetedNode.label.type){
+        case "Identifier":
+            if(!matchIdentifier(targetedNode.label,node.label)){
+                return false
+            }
+            break;
+    }
+    //body
+    if(!matchStatement(targetedNode.body,node.body)){
+        return false 
+    }
     return true
 }
 
@@ -204,11 +235,42 @@ function matchReturnStatement(targetedNode, node) {
     
     return true
 }
-
-function matchSwitchStatement(targetedNode, node) {
+function matchSwitchCase(targetedNode,node){
+    //test
+    if(targetedNode.test && node.test){
+        if(!matchExpression(targetedNode.test,node.test)){
+            return false
+        }
+    }else {
+        if(targetedNode.test || node.test){
+            return false
+        }
+    }
+    //consequent
+    if(!matchStatement(targetedNode.consequent,node.consequent)){
+        return false
+    }
     return true
 }
-
+function matchSwitchStatement(targetedNode, node) {
+    //discriminant
+    if(!matchExpression(targetedNode.discriminant,node.discriminant)){
+        return false
+    }
+    //cases
+    for(let targetedCase of targetedNode.cases){
+        let found = false
+        for(let nodeCase of node.cases) {
+            if(matchSwitchCase(targetedCase, nodeCase)){
+                found = true
+            }
+        }
+        if(!found) {
+            return false
+        }
+    }
+    return true
+}
 function matchThrowStatement(targetedNode, node) {
     if(!matchExpression(targetedNode.argument, node.argument)) {
         return false
@@ -300,6 +362,15 @@ function matchFunctionDeclaration(targetedNode, node) {
 }
 
 function matchDoWhileStatement(targetedNode, node) {
+    //test
+    console.log('nora')
+    if(!matchExpression(targetedNode.test,node.test)){
+        return false
+    }
+    //body
+    if(!matchStatement(targetedNode.body,node.body)){
+        return false
+    }
     return true
 }
 
@@ -945,7 +1016,7 @@ function matchMemberExpression(targetedNode, node){
                 return false
             }
             break;
-        case 'Expression':
+        default:
             if(!matchExpression(targetedNode.object, node.object)) {
                 return false
             }
@@ -961,7 +1032,7 @@ function matchMemberExpression(targetedNode, node){
                 return false
             }
             break;
-        case 'Expression':
+        default:
             if(!matchExpression(targetedNode.property, node.property)) {
                 return false
             }
