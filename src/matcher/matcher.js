@@ -16,15 +16,26 @@ function matchRule({name:fileName, ast}, rule, reports) {
 function matchPattern(fileAST, pattern) {
     
     let targetedNode
+    let AST
     if(pattern.pattern) {
-        targetedNode = createBlockStatement(pattern.pattern)
-        console.log(targetedNode)
+        if(pattern.pattern.body.length == 1) { // Type 1 (Single Line)
+            targetedNode = pattern.pattern.body[0]
+            AST = fileAST
+        }else { // Type 2 (Multi Line)
+            AST = createBlockStatement(fileAST)
+            targetedNode = createBlockStatement(pattern.pattern)
+        }
     }else {
-        targetedNode = createBlockStatement(pattern['pattern-not'])
+        if(pattern['pattern-not'].body.length == 1) { // Type 1 (Single Line)
+            AST = fileAST
+            targetedNode = pattern['pattern-not'].body[0]
+        }else { // Type 2 (Multi Line)
+            AST = createBlockStatement(fileAST)
+            targetedNode = createBlockStatement(pattern['pattern-not'])
+        }
     }
-    console.log(targetedNode.test)
     let match = false
-    AbstractSyntaxTree.walk(createBlockStatement(fileAST), (node) => {
+    AbstractSyntaxTree.walk(AST, (node) => {
         if(!match) {
             if(targetedNode.type === 'ExpressionStatement') {
                 targetedNode = targetedNode.expression
