@@ -1,7 +1,7 @@
-import { CharTypes } from './charClassifier.js';
-import { report } from '../errors.js';
-import { advanceChar, TokenLookup, scanSingleToken, scanNewLine, consumeLineFeed } from './index.js';
-import { decodeHTMLStrict } from './decodeHTML.js';
+import { CharTypes } from './charClassifier';
+import { report } from '../errors';
+import { advanceChar, TokenLookup, scanSingleToken, scanNewLine, consumeLineFeed } from './';
+import { decodeHTMLStrict } from './decodeHTML';
 export function scanJSXAttributeValue(parser, context) {
     parser.startPos = parser.tokenPos = parser.index;
     parser.startColumn = parser.colPos = parser.column;
@@ -92,4 +92,4 @@ export function scanJSXIdentifier(parser) {
     parser.token = 208897;
     return parser.token;
 }
-//# sourceMappingURL=jsx.mjs.map
+//# sourceMappingURL=jsx.js.map

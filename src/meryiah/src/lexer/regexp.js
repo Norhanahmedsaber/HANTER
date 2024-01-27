@@ -1,6 +1,6 @@
-import { advanceChar } from './common.js';
-import { isIdentifierPart } from './charClassifier.js';
-import { report } from '../errors.js';
+import { advanceChar } from './common';
+import { isIdentifierPart } from './charClassifier';
+import { report } from '../errors';
 export function scanRegularExpression(parser, context) {
     const bodyStart = parser.index;
     let preparseState = 0;
@@ -106,4 +106,4 @@ function validate(parser, pattern, flags) {
         }
     }
 }
-//# sourceMappingURL=regexp.mjs.map
+//# sourceMappingURL=regexp.js.map

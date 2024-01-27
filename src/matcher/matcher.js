@@ -1,6 +1,7 @@
 import AbstractSyntaxTree from 'abstract-syntax-tree'
 import evaluate from "./evaluate.js"
-import matchTypes from './matchingAlgorithms.js'
+import matchTypes from './matchingAlgorithms2.js'
+import { createBlockStatement } from './helpers.js'
 export default function match(file, rules, reports) {
     for(let rule of rules) {
         matchRule(file, rule, reports)
@@ -13,16 +14,25 @@ function matchRule({name:fileName, ast}, rule, reports) {
 }
 
 function matchPattern(fileAST, pattern) {
-
-    // TODO Add Check to pattern-not 
-    // console.log(pattern)
-    const targetednNode = pattern.pattern.body[0]
-    // console.log(targetednNode)
+    
+    let targetedNode
+    if(pattern.pattern) {
+        targetedNode = createBlockStatement(pattern.pattern)
+        console.log(targetedNode)
+    }else {
+        targetedNode = createBlockStatement(pattern['pattern-not'])
+    }
+    console.log(targetedNode.test)
     let match = false
-    AbstractSyntaxTree.walk(fileAST, (node) => {
-        if(node.type === targetednNode.type) {
-            if(matchTypes[targetednNode.type](targetednNode, node)) {
-                match = true
+    AbstractSyntaxTree.walk(createBlockStatement(fileAST), (node) => {
+        if(!match) {
+            if(targetedNode.type === 'ExpressionStatement') {
+                targetedNode = targetedNode.expression
+            }
+            if(node.type === targetedNode.type) {
+                if(matchTypes[targetedNode.type](targetedNode, node)) {
+                    match = node.loc.start
+                }
             }
         }
     })
@@ -37,36 +47,24 @@ function report(fileName, info, reports) {
 }
 
 function createLogicContainer(rule, ast) {
-    return processPattern(rule.patterns, ast);
+    return processPattern(rule, ast);
 }
 
-function processPattern(patterns, ast) {
-    if (!patterns) return null;
-
-    // Single pattern case
-    if (!Array.isArray(patterns)) {
-        return convertSinglePattern(patterns, ast);
-    }
-
-    // Multiple patterns, handle recursively
-    const logicObject = { type: 'AND', value: [] };
-    patterns.forEach(pattern => {
-        if (pattern['pattern-either']) {
-            // For pattern-either, use OR logic
-            logicObject.value.push({
-                type: 'OR',
-                value: pattern['pattern-either'].map(p => convertSinglePattern(p, ast))
-            });
-        } else {
-            // For other patterns, handle them individually
-            const result = processPattern(pattern, ast);
-            if (result) logicObject.value.push(result);
+function processPattern(rule, ast) {
+    if(rule.patterns) {
+        return {
+            type: "AND",
+            value: rule.patterns.map(p => processPattern(p, ast))
         }
-    });
-
-    return logicObject.value.length === 1 ? logicObject.value[0] : logicObject;
+    }else if(rule['pattern-either']) {
+        return {
+            type: "OR",
+            value: rule['pattern-either'].map(p => processPattern(p, ast))
+        }
+    }else {
+        return convertSinglePattern(rule, ast)
+    }
 }
-
 function convertSinglePattern(pattern, ast) {
     if (pattern.pattern) {
         return { type: 'pattern', value: matchPattern(ast, pattern) }; // Placeholder for actual pattern match

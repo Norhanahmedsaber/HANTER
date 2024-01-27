@@ -1,12 +1,12 @@
-import { report } from '../errors.js';
-import { unicodeLookup } from '../unicode.js';
-import { advanceChar, isExoticECMAScriptWhitespace, fromCodePoint, consumeLineFeed, scanNewLine, convertTokenType } from './common.js';
-import { skipSingleLineComment, skipMultiLineComment, skipSingleHTMLComment } from './comments.js';
-import { scanRegularExpression } from './regexp.js';
-import { scanTemplate } from './template.js';
-import { scanNumber } from './numeric.js';
-import { scanString } from './string.js';
-import { scanIdentifier, scanUnicodeIdentifier, scanIdentifierSlowCase, scanPrivateIdentifier, scanMetaVariable } from './identifier.js';
+import { report } from '../errors';
+import { unicodeLookup } from '../unicode';
+import { advanceChar, isExoticECMAScriptWhitespace, fromCodePoint, consumeLineFeed, scanNewLine, convertTokenType } from './common';
+import { skipSingleLineComment, skipMultiLineComment, skipSingleHTMLComment } from './comments';
+import { scanRegularExpression } from './regexp';
+import { scanTemplate } from './template';
+import { scanNumber } from './numeric';
+import { scanString } from './string';
+import { scanIdentifier, scanUnicodeIdentifier, scanIdentifierSlowCase, scanPrivateIdentifier } from './identifier';
 export const TokenLookup = [
     129,
     129,
@@ -44,7 +44,7 @@ export const TokenLookup = [
     16842800,
     134283267,
     131,
-    143500,
+    208897,
     8457015,
     8455751,
     134283267,
@@ -376,11 +376,16 @@ export function scanSingleToken(parser, context, state) {
                         return scanNumber(parser, context, 64 | 16);
                     if (next === 46) {
                         const index = parser.index + 1;
-                        if (index < parser.end && source.charCodeAt(index) === 46 && source.charCodeAt(index + 1) === 46 && source.charCodeAt(index + 2) === 46) {
+                        if (index < parser.end && source.charCodeAt(index) === 46 &&
+                            (index + 1) < parser.end && source.charCodeAt(index + 1) === 46 &&
+                            (index + 2) < parser.end && source.charCodeAt(index + 2) === 46) {
                             parser.column += 4;
                             parser.currentChar = source.charCodeAt((parser.index += 4));
                             return 139;
                         }
+                    }
+                    if (next === 46) {
+                        const index = parser.index + 1;
                         if (index < parser.end && source.charCodeAt(index) === 46) {
                             parser.column += 2;
                             parser.currentChar = source.charCodeAt((parser.index += 2));
@@ -388,9 +393,6 @@ export function scanSingleToken(parser, context, state) {
                         }
                     }
                     return 67108877;
-                case 143500:
-                    advanceChar(parser);
-                    return scanMetaVariable(parser, context, 0);
                 case 8455240: {
                     advanceChar(parser);
                     const ch = parser.currentChar;
@@ -504,4 +506,4 @@ export function scanSingleToken(parser, context, state) {
     }
     return 1048576;
 }
-//# sourceMappingURL=scan.mjs.map
+//# sourceMappingURL=scan.js.map

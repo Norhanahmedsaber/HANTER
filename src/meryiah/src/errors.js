@@ -190,4 +190,4 @@ export function reportMessageAt(index, line, column, type, ...params) {
 export function reportScannerError(index, line, column, type) {
     throw new ParseError(index, line, column, type);
 }
-//# sourceMappingURL=errors.mjs.map
+//# sourceMappingURL=errors.js.map

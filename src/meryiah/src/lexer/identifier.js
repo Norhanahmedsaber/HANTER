@@ -1,19 +1,12 @@
-import { descKeywordTable } from '../token.js';
-import { advanceChar, consumeMultiUnitCodePoint, fromCodePoint, toHex } from './common.js';
-import { CharTypes, isIdentifierPart, isIdentifierStart, isIdPart } from './charClassifier.js';
-import { report, reportScannerError } from '../errors.js';
+import { descKeywordTable } from '../token';
+import { advanceChar, consumeMultiUnitCodePoint, fromCodePoint, toHex } from './common';
+import { CharTypes, isIdentifierPart, isIdentifierStart, isIdPart } from './charClassifier';
+import { report, reportScannerError } from '../errors';
 export function scanIdentifier(parser, context, isValidAsKeyword) {
     while (isIdPart[advanceChar(parser)]) { }
     parser.tokenValue = parser.source.slice(parser.tokenPos, parser.index);
     return parser.currentChar !== 92 && parser.currentChar <= 0x7e
         ? descKeywordTable[parser.tokenValue] || 208897
-        : scanIdentifierSlowCase(parser, context, 0, isValidAsKeyword);
-}
-export function scanMetaVariable(parser, context, isValidAsKeyword) {
-    while (isIdPart[advanceChar(parser)]) { }
-    parser.tokenValue = parser.source.slice(parser.tokenPos, parser.index);
-    return parser.currentChar !== 92 && parser.currentChar <= 0x7e
-        ? 143500
         : scanIdentifierSlowCase(parser, context, 0, isValidAsKeyword);
 }
 export function scanUnicodeIdentifier(parser, context) {
@@ -22,80 +15,6 @@ export function scanUnicodeIdentifier(parser, context) {
         report(parser, 4);
     parser.tokenValue = fromCodePoint(cookedChar);
     return scanIdentifierSlowCase(parser, context, 1, CharTypes[cookedChar] & 4);
-}
-export function scanMetaVariableSlowCase(parser, context, hasEscape, isValidAsKeyword) {
-    let start = parser.index;
-    while (parser.index < parser.end) {
-        if (parser.currentChar === 92) {
-            parser.tokenValue += parser.source.slice(start, parser.index);
-            hasEscape = 1;
-            const code = scanIdentifierUnicodeEscape(parser);
-            if (!isIdentifierPart(code))
-                report(parser, 4);
-            isValidAsKeyword = isValidAsKeyword && CharTypes[code] & 4;
-            parser.tokenValue += fromCodePoint(code);
-            start = parser.index;
-        }
-        else if (isIdentifierPart(parser.currentChar) || consumeMultiUnitCodePoint(parser, parser.currentChar)) {
-            advanceChar(parser);
-        }
-        else {
-            break;
-        }
-    }
-    if (parser.index <= parser.end) {
-        parser.tokenValue += parser.source.slice(start, parser.index);
-    }
-    const length = parser.tokenValue.length;
-    if (isValidAsKeyword && length >= 2 && length <= 11) {
-        const token = descKeywordTable[parser.tokenValue];
-        if (token === void 0)
-            return 143500;
-        if (!hasEscape)
-            return token;
-        if (token === 209008) {
-            if ((context & (2048 | 4194304)) === 0) {
-                return token;
-            }
-            return 121;
-        }
-        if (context & 1024) {
-            if (token === 36972) {
-                return 122;
-            }
-            if ((token & 36864) === 36864) {
-                return 122;
-            }
-            if ((token & 20480) === 20480) {
-                if (context & 1073741824 && (context & 8192) === 0) {
-                    return token;
-                }
-                else {
-                    return 121;
-                }
-            }
-            return 143483;
-        }
-        if (context & 1073741824 &&
-            (context & 8192) === 0 &&
-            (token & 20480) === 20480)
-            return token;
-        if (token === 241773) {
-            return context & 1073741824
-                ? 143483
-                : context & 2097152
-                    ? 121
-                    : token;
-        }
-        if (token === 209007) {
-            return 143483;
-        }
-        if ((token & 36864) === 36864) {
-            return token;
-        }
-        return 121;
-    }
-    return 143500;
 }
 export function scanIdentifierSlowCase(parser, context, hasEscape, isValidAsKeyword) {
     let start = parser.index;
@@ -214,4 +133,4 @@ export function scanUnicodeEscape(parser) {
     parser.currentChar = parser.source.charCodeAt((parser.index += 4));
     return codePoint;
 }
-//# sourceMappingURL=identifier.mjs.map
+//# sourceMappingURL=identifier.js.map

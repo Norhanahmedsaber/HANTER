@@ -9,9 +9,17 @@ export default function evaluate(logicObject) {
 
     // Apply the logic gate operation
     if (logicObject.type === 'AND') {
-        return evaluatedValues.every(Boolean);
+        if(evaluatedValues.every(Boolean)) {
+            return evaluatedValues[0]
+        }
+        return false
     } else if (logicObject.type === 'OR') {
-        return evaluatedValues.some(Boolean);
+        let loc = false
+        evaluatedValues.some((pattern) => {
+            loc = pattern
+            return pattern
+        })
+        return loc
     } else {
         throw new Error(`Unknown logic gate type: ${logicObject.type}`);
     }

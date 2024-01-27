@@ -1,2 +1,2 @@
 export {};
-//# sourceMappingURL=estree.mjs.map
+//# sourceMappingURL=estree.js.map

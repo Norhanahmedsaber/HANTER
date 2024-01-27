@@ -1,6 +1,6 @@
-import { advanceChar, scanNewLine, consumeLineFeed } from './common.js';
-import { CharTypes } from './charClassifier.js';
-import { report } from '../errors.js';
+import { advanceChar, scanNewLine, consumeLineFeed } from './common';
+import { CharTypes } from './charClassifier';
+import { report } from '../errors';
 export const CommentTypes = ['SingleLine', 'MultiLine', 'HTMLOpen', 'HTMLClose', 'HashbangComment'];
 export function skipHashBang(parser) {
     const source = parser.source;
@@ -111,4 +111,4 @@ export function skipMultiLineComment(parser, source, state) {
     }
     report(parser, 16);
 }
-//# sourceMappingURL=comments.mjs.map
+//# sourceMappingURL=comments.js.map

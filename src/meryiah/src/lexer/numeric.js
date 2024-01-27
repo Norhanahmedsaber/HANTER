@@ -1,6 +1,6 @@
-import { advanceChar, toHex } from './common.js';
-import { CharTypes, isIdentifierStart } from './charClassifier.js';
-import { report, reportScannerError } from '../errors.js';
+import { advanceChar, toHex } from './common';
+import { CharTypes, isIdentifierStart } from './charClassifier';
+import { report, reportScannerError } from '../errors';
 export function scanNumber(parser, context, kind) {
     let char = parser.currentChar;
     let value = 0;
@@ -200,4 +200,4 @@ export function scanDecimalDigitsOrSeparator(parser, char) {
     }
     return ret + parser.source.substring(start, parser.index);
 }
-//# sourceMappingURL=numeric.mjs.map
+//# sourceMappingURL=numeric.js.map

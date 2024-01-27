@@ -1,5 +1,5 @@
-import { unicodeLookup } from '../unicode.js';
-import { report } from '../errors.js';
+import { unicodeLookup } from '../unicode';
+import { report } from '../errors';
 export function advanceChar(parser) {
     parser.column++;
     return (parser.currentChar = parser.source.charCodeAt(++parser.index));
@@ -69,10 +69,6 @@ export function convertTokenType(t) {
         case 67174409:
         case 132:
             return 'TemplateLiteral';
-        case 139:
-            return 'General';
-        case 143500:
-            return 'MetaVariable';
         default:
             if ((t & 143360) === 143360)
                 return 'Identifier';
@@ -81,4 +77,4 @@ export function convertTokenType(t) {
             return 'Punctuator';
     }
 }
-//# sourceMappingURL=common.mjs.map
+//# sourceMappingURL=common.js.map

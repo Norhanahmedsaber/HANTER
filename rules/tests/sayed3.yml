@@ -1,0 +1,7 @@
+id: anas-nora-test
+type: 1
+patterns: 
+  - pattern: | 
+        anas()
+        nora()
+message: "Avoid insecure deserialization using pickle.loads"

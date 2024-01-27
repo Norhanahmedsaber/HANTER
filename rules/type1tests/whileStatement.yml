@@ -1,0 +1,7 @@
+id: whileStatement 
+type: 1
+patterns:
+    - pattern: "while(anas) {
+      nora()
+    }"     
+message: "Avoid insecure deserialization using pickle.loads"
