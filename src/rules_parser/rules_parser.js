@@ -1,12 +1,11 @@
 import { parseScript } from '../meryiah/src/meriyah.js';
-import AbstractSyntaxTree from 'abstract-syntax-tree';
 export default function parseRule(rule) {
     for (let key of Object.keys(rule)) {
         if ( key == "pattern" || key == "pattern-not")
         {
             rule[key] = parsePattern(rule[key])
         }
-        else if (key == "patterns-either" || key == "patterns") {
+        else if (key == "pattern-either" || key == "patterns") {
             rule[key] = parseContainer(rule[key])
         }
     }
@@ -20,15 +19,15 @@ function parseContainer(container) {
             container[i]['pattern-not'] = parsePattern(container[i]['pattern-not'])
         }else if(container[i].patterns) {
             container[i].patterns = parseContainer(container[i].patterns)
-        }else if(container[i]['patterns-either']) {
-            container[i]['patterns-either'] = parseContainer(container[i]['patterns-either'])
+        }else if(container[i]['pattern-either']) {
+            container[i]['pattern-either'] = parseContainer(container[i]['pattern-either'])
         }
     }
     return container
 }
 function parsePattern(rule) {
     try {
-       return AbstractSyntaxTree.parse(rule)
+       return parseScript(rule)
     }
     catch (err) {
         console.log (err)

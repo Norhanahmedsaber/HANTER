@@ -1,4 +1,4 @@
-import { unicodeLookup } from '../unicode.js';
+import { unicodeLookup } from '../unicode';
 export const CharTypes = [
     0,
     0,
@@ -399,4 +399,4 @@ export function isIdentifierPart(code) {
         ? isIdPart[code]
         : (unicodeLookup[(code >>> 5) + 0] >>> code) & 31 & 1 || (code === 8204 || code === 8205);
 }
-//# sourceMappingURL=charClassifier.mjs.map
+//# sourceMappingURL=charClassifier.js.map

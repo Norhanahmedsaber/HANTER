@@ -1,6 +1,6 @@
-import { advanceChar, fromCodePoint } from './common.js';
-import { parseEscape, handleStringError } from './string.js';
-import { report } from '../errors.js';
+import { advanceChar, fromCodePoint } from './common';
+import { parseEscape, handleStringError } from './string';
+import { report } from '../errors';
 export function scanTemplate(parser, context) {
     const { index: start } = parser;
     let token = 67174409;
@@ -88,4 +88,4 @@ export function scanTemplateTail(parser, context) {
     parser.column--;
     return scanTemplate(parser, context);
 }
-//# sourceMappingURL=template.mjs.map
+//# sourceMappingURL=template.js.map

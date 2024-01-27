@@ -24,6 +24,6 @@
       "typeRoots": ["./node_modules/@types"],
       "types": ["node", "mocha"]
     },
-    "include": ["src/meryiah", "./package.json"]
+    "include": ["./src/meryiah/src", "./package.json"]
   }
   

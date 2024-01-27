@@ -78,4 +78,4 @@ export const descKeywordTable = Object.create(null, {
     target: { value: 143494 },
     meta: { value: 143495 },
 });
-//# sourceMappingURL=token.mjs.map
+//# sourceMappingURL=token.js.map

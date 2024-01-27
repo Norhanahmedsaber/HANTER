@@ -104,26 +104,8 @@ function matchArrowFunctionExpression(targetedNode,node) {
     return true
 }
 function matchBlockStatement(targetedNode, node) {
-    if (targetedNode.body.length > node.body.length) {
+    if(!matchBlockStatementBase(targetedNode, node)){
         return false
-    }
-    if(targetedNode.body.length !== 0) {
-        let currentTargetedStatement = 0; // i
-        let currentNodeStatement = 0; // c
-        while(currentTargetedStatement < targetedNode.body.length && 
-              currentNodeStatement < node.body.length) {
-                if(matchStatement(targetedNode.body[currentTargetedStatement], node.body[currentNodeStatement])) {
-                    currentTargetedStatement++;
-                }
-                currentNodeStatement++;
-        }
-        if(currentTargetedStatement < targetedNode.body.length) {
-            return false
-        }
-    } else {
-        if(node.body.length > 0) {
-            return false
-        }
     }
     return true;
 }
@@ -413,10 +395,63 @@ function matchForOfStatement(targetedNode, node) {
 }
 
 function matchForStatement(targetedNode, node) {
+    // init
+    if(targetedNode.init && node.init) {
+        if(targetedNode.init.type !== node.init.type) {
+            return false
+        }
+        switch(targetedNode.init.type) {
+            case 'VariableDeclaration':
+                if(!matchVariableDeclaration(targetedNode.init, node.init)) {
+                    return false
+                }
+                break;
+            default: // Expression
+                if(!matchExpression(targetedNode.init, node.init)) {
+                    return false
+                }
+        }
+    } else {
+        if(targetedNode.init || node.init) {
+            return false
+        }
+    }
+    // test
+    if(targetedNode.test && node.test) {
+        if(!matchExpression(targetedNode.test, node.test)) {
+            return false
+        }
+    }else {
+        if(targetedNode.test || node.test) {
+            return false
+        }
+    }
+    // update
+    if(targetedNode.update && node.update) {
+        if(!matchExpression(targetedNode.update, node.update)) {
+            return false
+        }
+    }else {
+        if(targetedNode.update || node.update) {
+            return false
+        }
+    }
+    // body
+    if(!matchStatement(targetedNode.body, node.body)) {
+        return false
+    }
     return true
 }
 
 function matchWhileStatement(targetedNode, node) {
+    // test
+    if(!matchExpression(targetedNode.test, node.test)) {
+        return false
+    }
+    // body
+    if(!matchStatement(targetedNode.body, node.body)) {
+        return false
+    }
     return true
 }
 
@@ -1418,13 +1453,30 @@ function matchTaggedTemplateExpression(targetedNode, node){
 }
 
 function matchUnaryExpression(targetedNode,node){
+    if(targetedNode.operator!==node.operator){
+        return false
+    }
+    if(targetedNode.prefix!==node.prefix){
+        return false
+    }
+    if(!matchExpression(targetedNode.argument,node.argument)){
+        return false
+    }
     return true
     
 }
 
 function matchUpdateExpression(targetedNode,node){
+    if(targetedNode.operator!==node.operator){
+        return false
+    }
+    if(targetedNode.prefix!==node.prefix){
+        return false
+    }
+    if(!matchExpression(targetedNode.argument,node.argument)){
+        return false
+    }
     return true
-    
 }
 function matchYieldExpression(targetedNode,node){
     
@@ -1505,10 +1557,155 @@ function matchExpression(targetedNode,node) {
     }
     return true
 }
+function matchBigIntLiteral(targetedNode, node) {
+    if(targetedNode.bigint !== node.bigint) {
+        return false
+    }
+    if(!matchLiteral(targetedNode, node)) {
+        return false
+    }
+    return true
+}
+function matchParenthesizedExpression(targetedNode, node) {
+    if(!matchExpression(targetedNode.expression, node.expression)) {
+        return false
+    }
+    return true
+}
+function matchRegExpLiteral(targetedNode, node) {
+    if(targetedNode.regex.pattern !== node.regex.pattern) {
+        return false
+    }
+    if(targetedNode.regex.flags !== node.regex.flags) {
+        return false
+    }
+    return true
+}
+function matchStaticBlock(targetedNode, node) {
+    if(!matchBlockStatementBase(targetedNode, node)) {
+        return false
+    }
+    return true
+}
+function matchBlockStatementBase(targetedNode, node) {
+    if (targetedNode.body.length > node.body.length) {
+        return false
+    }
+    if(targetedNode.body.length !== 0) {
+        let currentTargetedStatement = 0; // i
+        let currentNodeStatement = 0; // c
+        while(currentTargetedStatement < targetedNode.body.length && 
+              currentNodeStatement < node.body.length) {
+                if(matchStatement(targetedNode.body[currentTargetedStatement], node.body[currentNodeStatement])) {
+                    currentTargetedStatement++;
+                }
+                currentNodeStatement++;
+        }
+        if(currentTargetedStatement < targetedNode.body.length) {
+            return false
+        }
+    } else {
+        if(node.body.length > 0) {
+            return false
+        }
+    }
+    return true
+}
 const matchTypes = {
     VariableDeclaration: matchVariableDeclaration,
     VariableDeclarator: matchVariableDeclarator,
     Identifier: matchIdentifier,
-    ArrowFunctionExpression: matchArrowFunctionExpression
+    ArrowFunctionExpression: matchArrowFunctionExpression,
+    ArrayExpression: matchArrayExpression,
+    ArrayPattern: matchArrayPattern,
+    ArrowFunctionExpression: matchArrowFunctionExpression,
+    AssignmentExpression: matchAssignmentExpression,
+    AssignmentPattern: matchAssignmentPattern,
+    AwaitExpression: matchAwaitExpression,
+    BigIntLiteral: matchBigIntLiteral,
+    BinaryExpression: matchBinaryExpression,
+    BlockStatement: matchBlockStatement,
+    BreakStatement: matchBreakStatement,
+    CallExpression: matchCallExpression,
+    ChainExpression: matchChainExpression,
+    ImportExpression: matchImportExpression,
+    CatchClause: matchCatchClause,
+    // ClassBody: matchClassBody,
+    ClassDeclaration: matchClassDeclaration,
+    ClassExpression: matchClassExpression,
+    ConditionalExpression: matchConditionalExpression,
+    ContinueStatement: matchContinueStatement,
+    DebuggerStatement: matchDebuggerStatement,
+    Decorator: matchDecorator,
+    DoWhileStatement: matchDoWhileStatement,
+    EmptyStatement: matchEmptyStatement,
+    ExportAllDeclaration: matchExportAllDeclaration,
+    ExportDefaultDeclaration: matchExportDefaultDeclaration,
+    ExportNamedDeclaration: matchExportNamedDeclaration,
+    // ExportSpecifier: matchExportSpecifier,
+    ExpressionStatement: matchExpressionStatement,
+    // PropertyDefinition: matchPropertyDefinition,
+    ForInStatement: matchForInStatement,
+    ForOfStatement: matchForOfStatement,
+    ForStatement: matchForStatement,
+    FunctionDeclaration: matchFunctionDeclaration,
+    FunctionExpression: matchFunctionExpression,
+    Identifier: matchIdentifier,
+    IfStatement: matchIfStatement,
+    Import: matchImport,
+    ImportDeclaration: matchImportDeclaration,
+    // ImportDefaultSpecifier: matchImportDefaultSpecifier,
+    // ImportNamespaceSpecifier: matchImportNamespaceSpecifier,
+    // ImportSpecifier: matchImportSpecifier,
+    // JSXNamespacedName: matchJSXNamespacedName,
+    // JSXAttribute: matchJSXAttribute,
+    // JSXClosingElement: matchJSXClosingElement,
+    // JSXClosingFragment: matchJSXClosingFragment,
+    // JSXElement: matchJSXElement,
+    // JSXEmptyExpression: matchJSXEmptyExpression,
+    // JSXExpressionContainer: matchJSXExpressionContainer,
+    // JSXFragment: matchJSXFragment,
+    // JSXIdentifier: matchJSXIdentifier,
+    // JSXOpeningElement: matchJSXOpeningElement,
+    // JSXOpeningFragment: matchJSXOpeningFragment,
+    // JSXSpreadAttribute: matchJSXSpreadAttribute,
+    // JSXSpreadChild: matchJSXSpreadChild,
+    // JSXMemberExpression: matchJSXMemberExpression,
+    // JSXText: matchJSXText,
+    LabeledStatement: matchLabeledStatement,
+    Literal: matchLiteral,
+    LogicalExpression: matchLogicalExpression,
+    MemberExpression: matchMemberExpression,
+    MetaProperty: matchMetaProperty,
+    MethodDefinition: matchMethodDefinition,
+    NewExpression: matchNewExpression,
+    ObjectExpression: matchObjectExpression,
+    ObjectPattern: matchObjectPattern,
+    ParenthesizedExpression: matchParenthesizedExpression,
+    PrivateIdentifier: matchPrivateIdentifier,
+    // Program: matchProgram,
+    Property: matchProperty,
+    RegExpLiteral: matchRegExpLiteral,
+    RestElement: matchRestElement,
+    ReturnStatement: matchReturnStatement,
+    SequenceExpression: matchSequenceExpression,
+    SpreadElement: matchSpreadElement,
+    StaticBlock: matchStaticBlock,
+    Super: matchSuper,
+    SwitchCase: matchSwitchCase,
+    SwitchStatement: matchSwitchStatement,
+    TaggedTemplateExpression: matchTaggedTemplateExpression,
+    TemplateElement: matchTemplateElement,
+    TemplateLiteral: matchTemplateLiteral,
+    ThisExpression: matchThisExpression,
+    ThrowStatement: matchThrowStatement,
+    TryStatement: matchTryStatement,
+    UpdateExpression: matchUpdateExpression,
+    UnaryExpression: matchUnaryExpression,
+    VariableDeclaration: matchVariableDeclaration,
+    VariableDeclarator: matchVariableDeclarator,
+    WhileStatement: matchWhileStatement,
+    WithStatement: matchWithStatement,
+    YieldExpression: matchYieldExpression,
 }
 export default matchTypes

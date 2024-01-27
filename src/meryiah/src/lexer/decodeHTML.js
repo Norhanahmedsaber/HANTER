@@ -2176,4 +2176,4 @@ function decodeCodePoint(codePoint) {
     }
     return String.fromCodePoint(codePoint);
 }
-//# sourceMappingURL=decodeHTML.mjs.map
+//# sourceMappingURL=decodeHTML.js.map

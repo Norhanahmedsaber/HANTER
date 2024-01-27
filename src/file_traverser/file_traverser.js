@@ -2,7 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { Minimatch, minimatch } from 'minimatch'
 
-export default function getFiles(dirPath, { extensions, ignoredPatterns }) {
+export default function getFiles(dirPath, { extensions, ignoredDirs, ignoredPatterns }) {
 
   // get the absolute path for the passed relative path 
   const dirAbsolutePath = getAbsolutePath(dirPath)
@@ -22,7 +22,10 @@ export default function getFiles(dirPath, { extensions, ignoredPatterns }) {
     // Checks if the file/dir is a directory
     if(fs.statSync(path.join(dirAbsolutePath, files[file])).isDirectory()) {
       // Traverses the directoy in a recursive manner
-      filePaths = filePaths.concat(getFiles(path.join(dirPath, files[file]), { extensions, ignoredPatterns }))
+      if(ignoredDirs.includes(path.basename(files[file]))) {
+        continue;
+      }
+      filePaths = filePaths.concat(getFiles(path.join(dirPath, files[file]), { extensions, ignoredDirs }))
     }else { // Not a directory
       const isValidExtension = extensions.includes(getExtension(files[file]))
       const isIgnoredPattern = isIgnored(path.join(dirPath, files[file]), ignoredPatterns)
