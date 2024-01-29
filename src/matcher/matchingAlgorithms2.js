@@ -7,7 +7,7 @@ import restElement from './definitions/restElement'
 import spreadArgument from "./definitions/spreadArgument"
 import variableDeclaratorId from "./definitions/variableDeclaratorId"
 import property from "./definitions/property"
-import {argumentsIncludesGeneral,noOfnotGeneralArgs} from "./helpers"
+import { argumentsIncludesGeneral, noOfnotGeneralArgs } from "./helpers"
 function matchVariableDeclaration(targetedNode, node) {
     // type
     if (targetedNode.type !== node.type) {
@@ -293,7 +293,7 @@ function matchTryStatement(targetedNode, node) {
 }
 
 function matchCatchClause(targetedNode, node) {
-    
+
     // body
     if (!matchBlockStatement(targetedNode.body, node.body)) {
         return false
@@ -301,7 +301,7 @@ function matchCatchClause(targetedNode, node) {
 
     // param
     if (targetedNode.param && node.param) {
-        if(targetedNode.param.type === "General") {
+        if (targetedNode.param.type === "General") {
             return true
         }
         if (targetedNode.param.type !== node.param.type) {
@@ -690,7 +690,7 @@ function matchAssignmentPattern(targetedNode, node) {
             return false
         }
     }
-    if(targetedNode.left.type === "General") {
+    if (targetedNode.left.type === "General") {
         return true
     }
     if (targetedNode.left.type !== node.left.type) {
@@ -821,7 +821,7 @@ function matchRestElement(targtedNode, node) {
 }
 
 function matchBindingPattern(targetedNode, node) {
-    if(targetedNode.type === "General") {
+    if (targetedNode.type === "General") {
         return true
     }
     if (targetedNode.type !== node.type) {
@@ -957,20 +957,20 @@ function matchCallExpression(targetedNode, node) {
 
     // arguments
     if (argumentsIncludesGeneral(targetedNode.arguments)) { // General Found
-        if(noOfnotGeneralArgs(targetedNode.arguments) > node.arguments.length) {
+        if (noOfnotGeneralArgs(targetedNode.arguments) > node.arguments.length) {
             return false
         }
         let targetedArgumentIndex = 0, nodeArgumentIndex = 0
         let found = 0
-        while(nodeArgumentIndex < node.arguments.length) {
+        while (nodeArgumentIndex < node.arguments.length) {
             const targetedArgument = targetedNode.arguments[targetedArgumentIndex]
             const nodeArgument = node.arguments[nodeArgumentIndex]
-            if(targetedArgument?.type === "General") { // 1G 1NG
-                const nextTargetedArgument = targetedNode.arguments[targetedArgumentIndex+1]
-                if(!nextTargetedArgument) {
+            if (targetedArgument?.type === "General") { // 1G 1NG
+                const nextTargetedArgument = targetedNode.arguments[targetedArgumentIndex + 1]
+                if (!nextTargetedArgument) {
                     break;
                 }
-                if(nextTargetedArgument.type === "General") {
+                if (nextTargetedArgument.type === "General") {
                     targetedArgumentIndex++;
                     continue;
                 }
@@ -978,42 +978,42 @@ function matchCallExpression(targetedNode, node) {
                 if (nextTargetedArgument.type !== nodeArgument.type) {
                     nodeArgumentIndex++;
                     continue;
-                    
+
                 }
                 if (nextTargetedArgument.type == 'SpreadElement') {
                     if (!matchSpreadElement(nextTargetedArgument, nodeArgument)) {
                         nodeArgumentIndex++;
                         continue;
-    
+
                     }
                 } else {
                     if (!matchExpression(nextTargetedArgument, nodeArgument)) {
                         nodeArgumentIndex++;
                         continue;
-    
+
                     }
                 }
                 found++;
                 nodeArgumentIndex++;
                 targetedArgumentIndex += 2;
-            }else { // 2NG
-                if(!targetedArgument) {
+            } else { // 2NG
+                if (!targetedArgument) {
                     return false
-                    
+
                 }
                 if (targetedArgument.type !== nodeArgument.type) {
                     return false
-                    
+
                 }
                 if (targetedArgument.type == 'SpreadElement') {
                     if (!matchSpreadElement(targetedArgument, nodeArgument)) {
                         return false
-    
+
                     }
                 } else {
                     if (!matchExpression(targetedArgument, nodeArgument)) {
                         return false
-    
+
                     }
                 }
                 found++;
@@ -1119,7 +1119,7 @@ function matchFunctionExpression(targetedNode, node) {
 
 }
 function matchFunctionDeclarationBase(targetedNode, node) {
-    
+
     if (targetedNode.generator !== node.generator) {
         return false
     }
@@ -1139,11 +1139,11 @@ function matchFunctionDeclarationBase(targetedNode, node) {
             return false
         }
     }
-    if(targetedNode.id && node.id) {
-        if(targetedNode.id.type === "General") {
+    if (targetedNode.id && node.id) {
+        if (targetedNode.id.type === "General") {
             return true
-        } 
-        if(!matchIdentifier(targetedNode.id, node.id)) {
+        }
+        if (!matchIdentifier(targetedNode.id, node.id)) {
             return false
         }
     }
@@ -1452,7 +1452,7 @@ function matchProperty(targetedNode, node) {
         return false
     }
     // value
-    if(targetedNode.value.type === "General") {
+    if (targetedNode.value.type === "General") {
         return true
     }
     if (targetedNode.value.type !== node.value.type) {
@@ -1480,7 +1480,7 @@ function matchProperty(targetedNode, node) {
             }
             break
     }
-    
+
     return true
 }
 function matchObjectLiteralElementLike(targetedNode, node) {
@@ -1729,16 +1729,24 @@ function matchBlockStatementBase(targetedNode, node) {
         return false
     }
     if (targetedNode.body.length !== 0) {
-        let currentTargetedStatement = 0; // i
-        let currentNodeStatement = 0; // c
-        while (currentTargetedStatement < targetedNode.body.length &&
-            currentNodeStatement < node.body.length) {
-            if (matchStatement(targetedNode.body[currentTargetedStatement], node.body[currentNodeStatement])) {
-                currentTargetedStatement++;
-            }
-            currentNodeStatement++;
+        console.log("noor")
+        let targetStatementIndex = 0
+        let nodeStatementIndex = 0
+        while (!matchStatement(targetedNode.body[targetStatementIndex], node.body[nodeStatementIndex]) && nodeStatementIndex < node.body.length) {
+            nodeStatementIndex++;
         }
-        if (currentTargetedStatement < targetedNode.body.length) {
+        if (!(nodeStatementIndex < node.body.length)) {
+            return false
+        }
+
+        while (targetStatementIndex < targetedNode.body.length && nodeStatementIndex < node.body.length) {
+            if (!matchStatement(targetedNode.body[targetStatementIndex], node.body[nodeStatementIndex])) {
+                return false
+            }
+            nodeStatementIndex++;
+            targetStatementIndex++;
+        }
+        if (targetStatementIndex < targetedNode.body.length) {
             return false
         }
     } else {
