@@ -20,8 +20,18 @@ function createBlockStatement(tree) {
         loc: tree.loc
     }
 }
+function statementsIncludesGeneral(statements) {
+    let found = false
+    statements.forEach(statement => {
+        if(statement.type === "General") {
+            found = true
+        }
+    });
+    return found
+}
 export {
     noOfnotGeneralArgs,
     argumentsIncludesGeneral,
-    createBlockStatement
+    createBlockStatement,
+    statementsIncludesGeneral
 }

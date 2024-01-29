@@ -7,7 +7,7 @@ import restElement from './definitions/restElement'
 import spreadArgument from "./definitions/spreadArgument"
 import variableDeclaratorId from "./definitions/variableDeclaratorId"
 import property from "./definitions/property"
-import { argumentsIncludesGeneral, noOfnotGeneralArgs } from "./helpers"
+import { argumentsIncludesGeneral, noOfnotGeneralArgs, statementsIncludesGeneral } from "./helpers"
 function matchVariableDeclaration(targetedNode, node) {
     // type
     if (targetedNode.type !== node.type) {
@@ -1725,29 +1725,74 @@ function matchStaticBlock(targetedNode, node) {
     return true
 }
 function matchBlockStatementBase(targetedNode, node) {
-    if (targetedNode.body.length > node.body.length) {
-        return false
-    }
-    if (targetedNode.body.length !== 0) {
-        console.log("noor")
-        let targetStatementIndex = 0
-        let nodeStatementIndex = 0
-        while (!matchStatement(targetedNode.body[targetStatementIndex], node.body[nodeStatementIndex]) && nodeStatementIndex < node.body.length) {
-            nodeStatementIndex++;
-        }
-        if (!(nodeStatementIndex < node.body.length)) {
-            return false
-        }
 
-        while (targetStatementIndex < targetedNode.body.length && nodeStatementIndex < node.body.length) {
-            if (!matchStatement(targetedNode.body[targetStatementIndex], node.body[nodeStatementIndex])) {
+    if (targetedNode.body.length !== 0) {
+        if (statementsIncludesGeneral(targetedNode.body)) { // General Case
+            if (noOfnotGeneralArgs(targetedNode.body) > node.body.length) {
                 return false
             }
-            nodeStatementIndex++;
-            targetStatementIndex++;
-        }
-        if (targetStatementIndex < targetedNode.body.length) {
-            return false
+            let targetedStatementIndex = 0, nodeStatementIndex = 0
+            let found = 0
+            while (nodeStatementIndex < node.body.length) {
+                const targetedStatement = targetedNode.body[targetedStatementIndex]
+                const nodeStatement = node.body[nodeStatementIndex]
+                if (targetedStatement?.type === "General") { // 1G 1NG
+                    const nextTargetedStatement = targetedNode.body[targetedStatementIndex + 1]
+                    if (!nextTargetedStatement) {
+                        break;
+                    }
+                    if (nextTargetedStatement.type === "General") {
+                        targetedStatementIndex++;
+                        continue;
+                    }
+    
+                    if(!matchStatement(nextTargetedStatement, nodeStatement)) {
+                        nodeStatementIndex++
+                        continue;
+                    }
+                    found++;
+                    nodeStatementIndex++;
+                    targetedStatementIndex += 2;
+                } else { // 2NG
+                    if (!targetedStatement) {
+                        return false
+    
+                    }
+                    if(!matchStatement(targetedStatement, nodeStatement)) {
+                        nodeStatementIndex++
+                        continue;
+                    }
+                    found++;
+                    nodeStatementIndex++;
+                    targetedStatementIndex += 2;
+                }
+            }
+            return found === noOfnotGeneralArgs(targetedNode.body)
+            
+        } else { // No General Case (Default)
+            if (targetedNode.body.length > node.body.length) {
+                return false
+            }
+            console.log("noor")
+            let targetStatementIndex = 0
+            let nodeStatementIndex = 0
+            while (!matchStatement(targetedNode.body[targetStatementIndex], node.body[nodeStatementIndex]) && nodeStatementIndex < node.body.length) {
+                nodeStatementIndex++;
+            }
+            if (!(nodeStatementIndex < node.body.length)) {
+                return false
+            }
+
+            while (targetStatementIndex < targetedNode.body.length && nodeStatementIndex < node.body.length) {
+                if (!matchStatement(targetedNode.body[targetStatementIndex], node.body[nodeStatementIndex])) {
+                    return false
+                }
+                nodeStatementIndex++;
+                targetStatementIndex++;
+            }
+            if (targetStatementIndex < targetedNode.body.length) {
+                return false
+            }
         }
     } else {
         if (node.body.length > 0) {

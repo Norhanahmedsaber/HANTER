@@ -1,8 +1,8 @@
 id: anas-nora-test
 type: 1
 patterns: 
-  - pattern: "if(x) {
-      anas();
-      nora()
-    }"
+  - pattern: |
+      console.log("anas")
+      .....
+      console.log(.....)
 message: "Avoid insecure deserialization using pickle.loads"
