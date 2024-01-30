@@ -190,7 +190,7 @@ export type LeftHandSideExpression =
   | TaggedTemplateExpression;
 export type LiteralExpression = Literal | TemplateLiteral;
 export type ObjectLiteralElementLike = MethodDefinition | Property | RestElement | SpreadElement;
-export type Parameter = AssignmentPattern | RestElement | ArrayPattern | ObjectPattern | Identifier;
+export type Parameter = AssignmentPattern | RestElement | ArrayPattern | ObjectPattern | Identifier | General;
 export type PrimaryExpression =
   | ArrayExpression
   | ArrayPattern

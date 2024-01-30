@@ -82,14 +82,9 @@ function matchArrowFunctionExpression(targetedNode, node) {
     if (targetedNode.async !== node.async) {
         return false
     }
-    if (targetedNode.params.length > node.params.length) {
-        return false
-    }
     // Params
-    for (let index in targetedNode.params) {
-        if (!matchParameter(targetedNode.params[index], node.params[index])) {
-            return false
-        }
+    if (!matchParameters(targetedNode.params, node.params)) {
+        return false
     }
     // Body
     if (targetedNode.body.type == "General" && node.body.type !== "BlockStatement") {
@@ -105,6 +100,58 @@ function matchArrowFunctionExpression(targetedNode, node) {
     } else {
         if (!matchExpression(targetedNode.body, node.body)) {
             return false
+        }
+    }
+    return true
+}
+function matchParameters(targetedParams, nodeParams) {
+    if (argumentsIncludesGeneral(targetedParams)) { // GENERAL CASE
+        if (noOfnotGeneralArgs(targetedParams) > nodeParams.length) {
+            return false
+        }
+        let targetedParamIndex = 0, nodeParamIndex = 0
+        let found = 0
+        while (nodeParamIndex < nodeParams.length) {
+            const targetedParam = targetedParams[targetedParamIndex]
+            const nodeParam = nodeParams[nodeParamIndex]
+            if (targetedParam?.type === "General") { // 1G, 1NG
+                const nextTargetedParam = targetedParams[targetedParamIndex + 1]
+                if (!nextTargetedParam) {
+                    break;
+                }
+                if (nextTargetedParam.type === "General") {
+                    targetedParamIndex++;
+                    continue
+                }
+                // matching
+                if (!matchParameter(nextTargetedParam, nodeParam)) {
+                    nodeParamIndex++;
+                    continue
+                }
+                found++;
+                nodeParamIndex++;
+                targetedParamIndex += 2;
+            } else { // 2NG
+                if (!targetedParam) {
+                    return false
+                }
+                if (!matchParameter(targetedParam, nodeParam)) {
+                    return false
+                }
+                found++;
+                nodeParamIndex++;
+                targetedParamIndex++;
+            }
+        }
+        return found === noOfnotGeneralArgs(targetedParams)
+    } else { // NORMAL CASE (NO GENERAL)
+        if (targetedParams.length > nodeParams.length) {
+            return false
+        }
+        for (let index in targetedParams) {
+            if (!matchParameter(targetedParams[index], nodeParams[index])) {
+                return false
+            }
         }
     }
     return true
@@ -1126,13 +1173,9 @@ function matchFunctionDeclarationBase(targetedNode, node) {
     if (targetedNode.async !== node.async) {
         return false
     }
-    if (targetedNode.params.length > node.params.length) {
+    // params
+    if (!matchParameters(targetedNode.params, node.params)) {
         return false
-    }
-    for (let index in targetedNode.params) {
-        if (!matchParameter(targetedNode.params[index], node.params[index])) {
-            return false
-        }
     }
     if (targetedNode.body) {
         if (!matchBlockStatement(targetedNode.body, node.body)) {
@@ -1745,8 +1788,8 @@ function matchBlockStatementBase(targetedNode, node) {
                         targetedStatementIndex++;
                         continue;
                     }
-    
-                    if(!matchStatement(nextTargetedStatement, nodeStatement)) {
+
+                    if (!matchStatement(nextTargetedStatement, nodeStatement)) {
                         nodeStatementIndex++
                         continue;
                     }
@@ -1756,9 +1799,9 @@ function matchBlockStatementBase(targetedNode, node) {
                 } else { // 2NG
                     if (!targetedStatement) {
                         return false
-    
+
                     }
-                    if(!matchStatement(targetedStatement, nodeStatement)) {
+                    if (!matchStatement(targetedStatement, nodeStatement)) {
                         nodeStatementIndex++
                         continue;
                     }
@@ -1768,7 +1811,7 @@ function matchBlockStatementBase(targetedNode, node) {
                 }
             }
             return found === noOfnotGeneralArgs(targetedNode.body)
-            
+
         } else { // No General Case (Default)
             if (targetedNode.body.length > node.body.length) {
                 return false
@@ -1805,7 +1848,6 @@ const matchTypes = {
     VariableDeclaration: matchVariableDeclaration,
     VariableDeclarator: matchVariableDeclarator,
     Identifier: matchIdentifier,
-    ArrowFunctionExpression: matchArrowFunctionExpression,
     ArrayExpression: matchArrayExpression,
     ArrayPattern: matchArrayPattern,
     ArrowFunctionExpression: matchArrowFunctionExpression,
