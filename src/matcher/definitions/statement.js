@@ -28,4 +28,5 @@ export default {
     ForOfStatement: "IterationStatement",
     ForStatement: "IterationStatement", 
     WhileStatement: "IterationStatement",
+    ForGeneralStatement: "IterationStatement"
 }

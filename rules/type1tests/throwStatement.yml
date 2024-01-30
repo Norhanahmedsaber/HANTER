@@ -1,0 +1,7 @@
+id: throwStatement 
+type: 1
+patterns:
+    - pattern: "const x = () => {
+      throw x
+    }"     
+message: "Avoid insecure deserialization using pickle.loads"

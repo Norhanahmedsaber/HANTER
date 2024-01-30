@@ -7,7 +7,7 @@ export default function getRules()
 {   
     let rulesJson = []
     const config = parseConfig()
-    const rulesFiles = getFiles('./node_modules/hanter/rules',{extensions:["yml"] , ignoredPatterns:config.exculdeRulesDirs})
+    const rulesFiles = getFiles('./node_modules/hanter/rules',{extensions:["yml"] , ignoredDirs:config.exculdeRulesDirs, ignoredPatterns:[]})
     rulesFiles.forEach(rule => {
         if(!isRuleContained(rule , config.exculdeRules)){
             const ruleJson = ymlToJson(rule)

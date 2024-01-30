@@ -1,6 +1,6 @@
-import { KeywordDescTable } from './token.js';
-import { report } from './errors.js';
-import { nextToken } from './lexer/scan.js';
+import { KeywordDescTable } from './token';
+import { report } from './errors';
+import { nextToken } from './lexer/scan';
 export function matchOrInsertSemicolon(parser, context, specDeviation) {
     if ((parser.flags & 1) === 0 &&
         (parser.token & 1048576) !== 1048576 &&
@@ -352,4 +352,4 @@ export function classifyIdentifier(parser, context, t, isArrow) {
     if (!isValidIdentifier(context, t))
         report(parser, 0);
 }
-//# sourceMappingURL=common.mjs.map
+//# sourceMappingURL=common.js.map

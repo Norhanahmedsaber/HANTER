@@ -1,0 +1,19 @@
+id: switchStatement 
+type: 1
+patterns:
+    - pattern: "const x= ()=>{
+      switch(name){
+        case 'x':
+        console.log(x);
+        break ;
+        
+        case 'nora':
+          console.log(nora);
+          break;
+        
+        default:
+        console.log(noraaaaaa);
+        break ;
+      }
+    }"     
+message: "Avoid insecure deserialization using pickle.loads"

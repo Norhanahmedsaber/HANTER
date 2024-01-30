@@ -1,5 +1,7 @@
-import { parseSource } from './parser.js';
-import * as ESTree from './estree.js';
+import { parseSource } from './parser';
+import * as ESTree from './estree';
+import * as meta from '../../../package.json';
+const version = meta.version;
 export function parseScript(source, options) {
     return parseSource(source, options, 0);
 }
@@ -9,5 +11,5 @@ export function parseModule(source, options) {
 export function parse(source, options) {
     return parseSource(source, options, 0);
 }
-export { ESTree };
-//# sourceMappingURL=meriyah.mjs.map
+export { ESTree, version };
+//# sourceMappingURL=meriyah.js.map
