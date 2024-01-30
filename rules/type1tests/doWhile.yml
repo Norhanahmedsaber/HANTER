@@ -1,0 +1,10 @@
+id: doWhileStatement
+type: 1
+patterns:
+    - pattern: "const x= ()=>{var i = 0;
+do {
+   i += 1;
+   result += i + ' ';
+}
+while (i > 0 && i < 5);}"  
+message: "Avoid insecure deserialization using pickle.loads"

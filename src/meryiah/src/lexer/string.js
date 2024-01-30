@@ -1,6 +1,6 @@
-import { report } from '../errors.js';
-import { toHex, advanceChar, fromCodePoint } from './common.js';
-import { CharTypes } from './charClassifier.js';
+import { report } from '../errors';
+import { toHex, advanceChar, fromCodePoint } from './common';
+import { CharTypes } from './charClassifier';
 export function scanString(parser, context, quote) {
     const { index: start } = parser;
     let ret = '';
@@ -189,4 +189,4 @@ export function handleStringError(state, code, isTemplate) {
         default:
     }
 }
-//# sourceMappingURL=string.mjs.map
+//# sourceMappingURL=string.js.map
