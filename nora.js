@@ -1,5 +1,5 @@
 
-const sourceCode = 'if(AnalyserNode()) {}'
+const sourceCode = 'function nas(anas){}'
 const node = {
   type: 'ExpressionStatement',
   expression: {
@@ -13,6 +13,6 @@ const node = {
     arguments: [{ type: 'Identifier', name: 'anas' }]
   }
 }
-console.log(require('abstract-syntax-tree').parse(sourceCode).body[0].test)
+console.log(require('abstract-syntax-tree').parse(sourceCode).body[0])
 
 // console.log(require('abstract-syntax-tree').generate(node))

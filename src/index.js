@@ -22,6 +22,5 @@ export default function hanter(){
             ast: parse(extract(file))
         }, rules, reports)
     }
-
     //report(Errors.error1)
 }

@@ -14,7 +14,6 @@ function matchRule({name:fileName, ast}, rule, reports) {
 }
 
 function matchPattern(fileAST, pattern) {
-    
     let targetedNode
     let AST
     if(pattern.pattern) {

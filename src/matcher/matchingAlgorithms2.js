@@ -7,7 +7,7 @@ import restElement from './definitions/restElement'
 import spreadArgument from "./definitions/spreadArgument"
 import variableDeclaratorId from "./definitions/variableDeclaratorId"
 import property from "./definitions/property"
-import {argumentsIncludesGeneral,noOfnotGeneralArgs} from "./helpers"
+import { argumentsIncludesGeneral, noOfnotGeneralArgs, statementsIncludesGeneral } from "./helpers"
 function matchVariableDeclaration(targetedNode, node) {
     // type
     if (targetedNode.type !== node.type) {
@@ -82,14 +82,9 @@ function matchArrowFunctionExpression(targetedNode, node) {
     if (targetedNode.async !== node.async) {
         return false
     }
-    if (targetedNode.params.length > node.params.length) {
-        return false
-    }
     // Params
-    for (let index in targetedNode.params) {
-        if (!matchParameter(targetedNode.params[index], node.params[index])) {
-            return false
-        }
+    if (!matchParameters(targetedNode.params, node.params)) {
+        return false
     }
     // Body
     if (targetedNode.body.type == "General" && node.body.type !== "BlockStatement") {
@@ -105,6 +100,58 @@ function matchArrowFunctionExpression(targetedNode, node) {
     } else {
         if (!matchExpression(targetedNode.body, node.body)) {
             return false
+        }
+    }
+    return true
+}
+function matchParameters(targetedParams, nodeParams) {
+    if (argumentsIncludesGeneral(targetedParams)) { // GENERAL CASE
+        if (noOfnotGeneralArgs(targetedParams) > nodeParams.length) {
+            return false
+        }
+        let targetedParamIndex = 0, nodeParamIndex = 0
+        let found = 0
+        while (nodeParamIndex < nodeParams.length) {
+            const targetedParam = targetedParams[targetedParamIndex]
+            const nodeParam = nodeParams[nodeParamIndex]
+            if (targetedParam?.type === "General") { // 1G, 1NG
+                const nextTargetedParam = targetedParams[targetedParamIndex + 1]
+                if (!nextTargetedParam) {
+                    break;
+                }
+                if (nextTargetedParam.type === "General") {
+                    targetedParamIndex++;
+                    continue
+                }
+                // matching
+                if (!matchParameter(nextTargetedParam, nodeParam)) {
+                    nodeParamIndex++;
+                    continue
+                }
+                found++;
+                nodeParamIndex++;
+                targetedParamIndex += 2;
+            } else { // 2NG
+                if (!targetedParam) {
+                    return false
+                }
+                if (!matchParameter(targetedParam, nodeParam)) {
+                    return false
+                }
+                found++;
+                nodeParamIndex++;
+                targetedParamIndex++;
+            }
+        }
+        return found === noOfnotGeneralArgs(targetedParams)
+    } else { // NORMAL CASE (NO GENERAL)
+        if (targetedParams.length > nodeParams.length) {
+            return false
+        }
+        for (let index in targetedParams) {
+            if (!matchParameter(targetedParams[index], nodeParams[index])) {
+                return false
+            }
         }
     }
     return true
@@ -293,7 +340,7 @@ function matchTryStatement(targetedNode, node) {
 }
 
 function matchCatchClause(targetedNode, node) {
-    
+
     // body
     if (!matchBlockStatement(targetedNode.body, node.body)) {
         return false
@@ -301,7 +348,7 @@ function matchCatchClause(targetedNode, node) {
 
     // param
     if (targetedNode.param && node.param) {
-        if(targetedNode.param.type === "General") {
+        if (targetedNode.param.type === "General") {
             return true
         }
         if (targetedNode.param.type !== node.param.type) {
@@ -690,7 +737,7 @@ function matchAssignmentPattern(targetedNode, node) {
             return false
         }
     }
-    if(targetedNode.left.type === "General") {
+    if (targetedNode.left.type === "General") {
         return true
     }
     if (targetedNode.left.type !== node.left.type) {
@@ -821,7 +868,7 @@ function matchRestElement(targtedNode, node) {
 }
 
 function matchBindingPattern(targetedNode, node) {
-    if(targetedNode.type === "General") {
+    if (targetedNode.type === "General") {
         return true
     }
     if (targetedNode.type !== node.type) {
@@ -957,20 +1004,20 @@ function matchCallExpression(targetedNode, node) {
 
     // arguments
     if (argumentsIncludesGeneral(targetedNode.arguments)) { // General Found
-        if(noOfnotGeneralArgs(targetedNode.arguments) > node.arguments.length) {
+        if (noOfnotGeneralArgs(targetedNode.arguments) > node.arguments.length) {
             return false
         }
         let targetedArgumentIndex = 0, nodeArgumentIndex = 0
         let found = 0
-        while(nodeArgumentIndex < node.arguments.length) {
+        while (nodeArgumentIndex < node.arguments.length) {
             const targetedArgument = targetedNode.arguments[targetedArgumentIndex]
             const nodeArgument = node.arguments[nodeArgumentIndex]
-            if(targetedArgument?.type === "General") { // 1G 1NG
-                const nextTargetedArgument = targetedNode.arguments[targetedArgumentIndex+1]
-                if(!nextTargetedArgument) {
+            if (targetedArgument?.type === "General") { // 1G 1NG
+                const nextTargetedArgument = targetedNode.arguments[targetedArgumentIndex + 1]
+                if (!nextTargetedArgument) {
                     break;
                 }
-                if(nextTargetedArgument.type === "General") {
+                if (nextTargetedArgument.type === "General") {
                     targetedArgumentIndex++;
                     continue;
                 }
@@ -978,42 +1025,42 @@ function matchCallExpression(targetedNode, node) {
                 if (nextTargetedArgument.type !== nodeArgument.type) {
                     nodeArgumentIndex++;
                     continue;
-                    
+
                 }
                 if (nextTargetedArgument.type == 'SpreadElement') {
                     if (!matchSpreadElement(nextTargetedArgument, nodeArgument)) {
                         nodeArgumentIndex++;
                         continue;
-    
+
                     }
                 } else {
                     if (!matchExpression(nextTargetedArgument, nodeArgument)) {
                         nodeArgumentIndex++;
                         continue;
-    
+
                     }
                 }
                 found++;
                 nodeArgumentIndex++;
                 targetedArgumentIndex += 2;
-            }else { // 2NG
-                if(!targetedArgument) {
+            } else { // 2NG
+                if (!targetedArgument) {
                     return false
-                    
+
                 }
                 if (targetedArgument.type !== nodeArgument.type) {
                     return false
-                    
+
                 }
                 if (targetedArgument.type == 'SpreadElement') {
                     if (!matchSpreadElement(targetedArgument, nodeArgument)) {
                         return false
-    
+
                     }
                 } else {
                     if (!matchExpression(targetedArgument, nodeArgument)) {
                         return false
-    
+
                     }
                 }
                 found++;
@@ -1119,31 +1166,27 @@ function matchFunctionExpression(targetedNode, node) {
 
 }
 function matchFunctionDeclarationBase(targetedNode, node) {
-    
+
     if (targetedNode.generator !== node.generator) {
         return false
     }
     if (targetedNode.async !== node.async) {
         return false
     }
-    if (targetedNode.params.length > node.params.length) {
+    // params
+    if (!matchParameters(targetedNode.params, node.params)) {
         return false
-    }
-    for (let index in targetedNode.params) {
-        if (!matchParameter(targetedNode.params[index], node.params[index])) {
-            return false
-        }
     }
     if (targetedNode.body) {
         if (!matchBlockStatement(targetedNode.body, node.body)) {
             return false
         }
     }
-    if(targetedNode.id && node.id) {
-        if(targetedNode.id.type === "General") {
+    if (targetedNode.id && node.id) {
+        if (targetedNode.id.type === "General") {
             return true
-        } 
-        if(!matchIdentifier(targetedNode.id, node.id)) {
+        }
+        if (!matchIdentifier(targetedNode.id, node.id)) {
             return false
         }
     }
@@ -1452,7 +1495,7 @@ function matchProperty(targetedNode, node) {
         return false
     }
     // value
-    if(targetedNode.value.type === "General") {
+    if (targetedNode.value.type === "General") {
         return true
     }
     if (targetedNode.value.type !== node.value.type) {
@@ -1480,7 +1523,7 @@ function matchProperty(targetedNode, node) {
             }
             break
     }
-    
+
     return true
 }
 function matchObjectLiteralElementLike(targetedNode, node) {
@@ -1725,21 +1768,74 @@ function matchStaticBlock(targetedNode, node) {
     return true
 }
 function matchBlockStatementBase(targetedNode, node) {
-    if (targetedNode.body.length > node.body.length) {
-        return false
-    }
+
     if (targetedNode.body.length !== 0) {
-        let currentTargetedStatement = 0; // i
-        let currentNodeStatement = 0; // c
-        while (currentTargetedStatement < targetedNode.body.length &&
-            currentNodeStatement < node.body.length) {
-            if (matchStatement(targetedNode.body[currentTargetedStatement], node.body[currentNodeStatement])) {
-                currentTargetedStatement++;
+        if (statementsIncludesGeneral(targetedNode.body)) { // General Case
+            if (noOfnotGeneralArgs(targetedNode.body) > node.body.length) {
+                return false
             }
-            currentNodeStatement++;
-        }
-        if (currentTargetedStatement < targetedNode.body.length) {
-            return false
+            let targetedStatementIndex = 0, nodeStatementIndex = 0
+            let found = 0
+            while (nodeStatementIndex < node.body.length) {
+                const targetedStatement = targetedNode.body[targetedStatementIndex]
+                const nodeStatement = node.body[nodeStatementIndex]
+                if (targetedStatement?.type === "General") { // 1G 1NG
+                    const nextTargetedStatement = targetedNode.body[targetedStatementIndex + 1]
+                    if (!nextTargetedStatement) {
+                        break;
+                    }
+                    if (nextTargetedStatement.type === "General") {
+                        targetedStatementIndex++;
+                        continue;
+                    }
+
+                    if (!matchStatement(nextTargetedStatement, nodeStatement)) {
+                        nodeStatementIndex++
+                        continue;
+                    }
+                    found++;
+                    nodeStatementIndex++;
+                    targetedStatementIndex += 2;
+                } else { // 2NG
+                    if (!targetedStatement) {
+                        return false
+
+                    }
+                    if (!matchStatement(targetedStatement, nodeStatement)) {
+                        nodeStatementIndex++
+                        continue;
+                    }
+                    found++;
+                    nodeStatementIndex++;
+                    targetedStatementIndex += 2;
+                }
+            }
+            return found === noOfnotGeneralArgs(targetedNode.body)
+
+        } else { // No General Case (Default)
+            if (targetedNode.body.length > node.body.length) {
+                return false
+            }
+            console.log("noor")
+            let targetStatementIndex = 0
+            let nodeStatementIndex = 0
+            while (!matchStatement(targetedNode.body[targetStatementIndex], node.body[nodeStatementIndex]) && nodeStatementIndex < node.body.length) {
+                nodeStatementIndex++;
+            }
+            if (!(nodeStatementIndex < node.body.length)) {
+                return false
+            }
+
+            while (targetStatementIndex < targetedNode.body.length && nodeStatementIndex < node.body.length) {
+                if (!matchStatement(targetedNode.body[targetStatementIndex], node.body[nodeStatementIndex])) {
+                    return false
+                }
+                nodeStatementIndex++;
+                targetStatementIndex++;
+            }
+            if (targetStatementIndex < targetedNode.body.length) {
+                return false
+            }
         }
     } else {
         if (node.body.length > 0) {
@@ -1752,7 +1848,6 @@ const matchTypes = {
     VariableDeclaration: matchVariableDeclaration,
     VariableDeclarator: matchVariableDeclarator,
     Identifier: matchIdentifier,
-    ArrowFunctionExpression: matchArrowFunctionExpression,
     ArrayExpression: matchArrayExpression,
     ArrayPattern: matchArrayPattern,
     ArrowFunctionExpression: matchArrowFunctionExpression,
