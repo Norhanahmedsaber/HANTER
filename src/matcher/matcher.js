@@ -10,7 +10,7 @@ export default function match(file, rules, reports) {
 
 function matchRule({name:fileName, ast}, rule, reports) {
     const logicBlock = createLogicContainer(rule, ast)
-    console.log(rule.id, evaluate(logicBlock))
+    console.log(fileName, rule.id, evaluate(logicBlock))
 }
 
 function matchPattern(fileAST, pattern) {
@@ -46,6 +46,7 @@ function matchPattern(fileAST, pattern) {
             }
         }
     })
+    
     return match
 }
 function report(fileName, info, reports) {
