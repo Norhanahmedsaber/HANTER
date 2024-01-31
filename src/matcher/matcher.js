@@ -50,6 +50,7 @@ function matchPattern(fileAST, pattern) {
             }
         }
     })
+    
     return match
 }
 function report(fileName, info, reports) {
