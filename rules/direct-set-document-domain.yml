@@ -1,0 +1,5 @@
+id: direct-set-document-domain
+message: Setting document.domain directly can lead to cause security vulnerabilities.
+language: javascript
+severity: WARNING
+pattern: document.domain = .....    

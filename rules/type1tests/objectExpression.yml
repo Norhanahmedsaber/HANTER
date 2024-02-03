@@ -1,5 +1,0 @@
-id: objectExpression 
-type: 1
-patterns:
-    - pattern: "const anas = {nora : 'anas'}"     
-message: "Avoid insecure deserialization using pickle.loads"

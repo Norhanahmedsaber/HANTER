@@ -1,6 +1,7 @@
 const error = require('chalk').white.bgRed
 const warning = require('chalk').white.bgYellow
-const errorId = require('chalk').gray
+const infoD = require('chalk').white.bgBlue
+const errorId = require('chalk').magentaBright
 const file = require('chalk').green
 const path = require('path')
 export default function report(reports) {
@@ -11,10 +12,10 @@ export default function report(reports) {
 const display = (reports) => {
     reports.forEach((r) => {
         console.log(file(path.resolve(path.dirname('./'), r.filepath)))
-        console.log("")
         r.reports.forEach((r) => {
-            console.log(`\t${r.line}:${r.col+1}\t${r.severity=='ERROR'?error("Error\t"):""}${r.severity=='WARNING'?warning("Warning\t"):""}\t${r.message}\t${errorId(r.rule_name)}`)
+            console.log(`\t${r.line}:${r.col+1}\t${r.severity=='ERROR'?error("  Error  \t"):""}${r.severity=='WARNING'?warning(" Warning \t"):""}${r.severity=='INFO'?infoD("  Info   \t"):""}${r.message}\t${errorId(r.rule_name)}`)
         })
+        console.log("")
     })
 }
 function sortReports(reports) {

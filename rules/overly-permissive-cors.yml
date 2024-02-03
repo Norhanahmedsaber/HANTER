@@ -1,0 +1,5 @@
+id: overly-permissive-cors
+message: Avoid overly permissive CORS settings in server's production environments.
+language: javascript
+severity: INFO
+pattern: "cors({ origin: '*'})"

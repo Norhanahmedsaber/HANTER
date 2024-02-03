@@ -1,0 +1,10 @@
+id: no-implied-eval
+message: Implied eval. Consider passing a function instead of a string to avoid attacks.
+severity: ERROR
+language: javascript
+pattern-either:
+    - pattern: setTimeout(".....", .....)
+    - pattern: setInterval(".....", .....)
+    - pattern: execScript(".....", .....)
+    - pattern: window.setTimeout(".....", .....)
+    - pattern: window.setInterval(".....", .....)

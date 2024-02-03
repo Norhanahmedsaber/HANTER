@@ -1,5 +1,0 @@
-id: memberExpression
-type: 1
-patterns:
-    - pattern: "const x = anas.nora.ahmed.ali"     
-message: "Avoid insecure deserialization using pickle.loads"
