@@ -9,6 +9,7 @@ import parseRule from './rules_parser/rules_parser.js'
 import report from './reporter/reporter.js'
 
 
+
 export default function hanter(){
     const rules = getRules();
     for(let rule of rules) {
