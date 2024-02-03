@@ -1,0 +1,5 @@
+id: disable-tls-verification-nodejs
+message: Disabling TLS/SSL certificate verification can cause security exposure problem.
+language: javascript
+severity: ERROR
+pattern: process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"

@@ -1,5 +1,0 @@
-id: forStatement 
-type: 1
-patterns:
-    - pattern: "const x = () => {for(let i=0;i<5;i++){console.log(i)}}"     
-message: "Avoid insecure deserialization using pickle.loads"

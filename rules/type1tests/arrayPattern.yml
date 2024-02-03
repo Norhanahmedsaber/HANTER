@@ -1,5 +1,0 @@
-id: arrayPattern 
-type: 1
-patterns:
-    - pattern: "const [x, y, z] = anas()"     
-message: "Avoid insecure deserialization using pickle.loads"
