@@ -6,7 +6,8 @@ import parseConfig from './utils/parsingconfig.js'
 import getRules from './rules_parser/get_rules.js'
 
 import parseRule from './rules_parser/rules_parser.js'
-import reporter from './reporter/reporter.js'
+import report from './reporter/reporter.js'
+
 
 
 export default function hanter(){
@@ -22,7 +23,5 @@ export default function hanter(){
             ast: parse(extract(file))
         }, rules, reports)
     }
-    reporter(reports.reports)
-    //savetoDB(reports.reports)
-    //report(Errors.error1)
+    report(reports.reports)
 }

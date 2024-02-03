@@ -1,46 +1,49 @@
-export default function reporter(reports) {
-    console.log(SortReportsByFile(reports))
-    console.log(formatReports(SortReportsByFile(reports)))
+const error = require('chalk').white.bgRed
+const warning = require('chalk').white.bgYellow
+const errorId = require('chalk').gray
+const file = require('chalk').green
+const path = require('path')
+export default function report(reports) {
+    const sortedReports = sortReports(reports)
+    // console.log(reports)
+    display(sortedReports)
 }
+const display = (reports) => {
+    reports.forEach((r) => {
+        console.log(file(path.resolve(path.dirname('./'), r.filepath)))
+        console.log("")
+        r.reports.forEach((r) => {
+            console.log(`\t${r.line}:${r.col+1}\t${r.severity=='ERROR'?error("Error\t"):""}${r.severity=='WARNING'?warning("Warning\t"):""}\t${r.message}\t${errorId(r.rule_name)}`)
+        })
+    })
+}
+function sortReports(reports) {
 
-function SortReportsByFile(reports) {
-    // Create an object to hold subarrays based on filepath
-    const filePathMap = {};
+    // Create an object to hold reports without rule_name, using rule_name as key
+    const reportsMap = {};
   
-    // Iterate through the reports and group them by filepath
+    // Iterate through the reports and group them by rule_name
     reports.forEach((report) => {
-      const { filepath } = report;
-      if (!filePathMap[filepath]) {
-        filePathMap[filepath] = [];
-      }
-      filePathMap[filepath].push(report);
-    });
+        const { filepath, ...rest } = report;
   
-    // Sort each subarray by line in ascending order
-    for (const filepath in filePathMap) {
-      filePathMap[filepath].sort((a, b) => a.line - b.line);
-    }
+        // If rule_name doesn't exist in reportsMap, add it
+        if (!reportsMap[filepath]) {
+            reportsMap[filepath] = [];
   
-    // Return an array of subarrays
-    return Object.values(filePathMap);
-}
-
-function formatReports(reports) {
-    const formattedOutput = [];
-
-    reports.forEach((subarray) => {
-        if (subarray.length > 0) {
-        const filepath = subarray[0].filepath;
-        const fileReports = subarray.map((report) => {
-            return `${report.filepath} (${report.line}:${report.col}) - ${report.rule_name}`;
-        });
-
-        formattedOutput.push(`${filepath}\n${fileReports.join('\n')}`);
         }
+  
+        // Push the report without rule_name into the corresponding subarray
+        reportsMap[filepath].push(rest);
     });
-
-    return formattedOutput.join('\n\n');
-}
   
-
+    // Create an array of objects with one occurrence of each rule_name
+    const resultArray = Object.keys(reportsMap).map((filepath) => {
+        return {
+            filepath,
+            reports: reportsMap[filepath],
+        };
+    });
   
+    return resultArray;
+  }
+
