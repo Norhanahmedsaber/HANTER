@@ -10,7 +10,10 @@ export default function match(file, rules, reports) {
 
 function matchRule({name:fileName, ast}, rule, reports) {
     const logicBlock = createLogicContainer(rule, ast)
-    console.log(fileName, rule.id, evaluate(logicBlock))
+    const match = evaluate(logicBlock)
+    if (match){
+        reports.reports.push( {filepath:fileName, line:match.line, col:match.column, rule_name:rule.id, message:rule.message, severity: rule.severity} )
+    }
 }
 
 function matchPattern(fileAST, pattern) {

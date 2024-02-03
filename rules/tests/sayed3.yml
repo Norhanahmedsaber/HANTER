@@ -1,4 +1,5 @@
 id: anas-nora-test
 type: 1
-pattern:  
+pattern: "console.log(.....)"
 message: "Avoid insecure deserialization using pickle.loads"
+severity: ERROR

@@ -6,6 +6,7 @@ import parseConfig from './utils/parsingconfig.js'
 import getRules from './rules_parser/get_rules.js'
 
 import parseRule from './rules_parser/rules_parser.js'
+import report from './reporter/reporter.js'
 
 
 export default function hanter(){
@@ -14,7 +15,6 @@ export default function hanter(){
         rule = parseRule(rule)
     }
     const sourceFiles = getFiles('./', parseConfig())
-    console.log(sourceFiles)
     const reports = {reports: []}
     for(let file of sourceFiles) {
         match({
@@ -22,5 +22,5 @@ export default function hanter(){
             ast: parse(extract(file))
         }, rules, reports)
     }
-    //report(Errors.error1)
+    report(reports.reports)
 }

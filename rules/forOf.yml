@@ -1,5 +1,0 @@
-id: forOfStatement 
-type: 1
-patterns:
-    - pattern: "const x = async ()=>{for(let anas of await nora) {console.log('ahmed')}}"     
-message: "Avoid insecure deserialization using pickle.loads"
