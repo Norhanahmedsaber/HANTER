@@ -1,0 +1,7 @@
+id: Example-Rule
+message: This Rule is for testing
+language: javascript
+severity: WARNING
+patterns:
+    - pattern: let $QUERY = `.....`
+    - pattern: client.query($QUERY, (.....) => {.....})

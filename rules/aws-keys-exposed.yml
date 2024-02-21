@@ -1,7 +1,0 @@
-id: aws-keys-exposed
-message: AWS access keys and secret keys should not be hardcoded in JavaScript code.
-language: javascript
-severity: WARNING
-patterns:
-    - pattern: AWS_ACCESS_KEY_ID = '.....'
-    - pattern: AWS_SECRET_ACCESS_KEY = '.....' 

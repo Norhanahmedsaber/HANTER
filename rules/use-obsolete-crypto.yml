@@ -1,7 +1,0 @@
-id: use-obsolete-crypto
-message: Avoid using obsolete cryptographic functions.
-language: javascript
-severity: WARNING
-patterns: 
-    - pattern: crypto.createCipher(.....)
-    - pattern: crypto.createDecipher(.....)   

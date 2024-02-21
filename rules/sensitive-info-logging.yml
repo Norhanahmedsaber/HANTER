@@ -1,7 +1,0 @@
-id: sensitive-info-logging
-message: Do not log sensitive information.
-language: javascript
-severity: WARNING
-pattern-either:
-    - pattern: console.log(....., token, .....)
-    - pattern: console.log(....., password, .....)
