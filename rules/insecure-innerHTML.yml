@@ -1,8 +1,0 @@
-id: insecure-innerHTML
-message: Using innerHTML with user-controlled data can lead to XSS vulnerabilities.
-language: javascript  
-severity: ERROR
-pattern-either: 
-  - pattern: element.innerHTML = .....
-  - pattern: div.innerHTML = .....
-    

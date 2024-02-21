@@ -1,5 +1,0 @@
-id: synchronous-xmlhttprequest
-message: Synchronous XMLHttpRequests can increase vulnerability to certain attacks.
-language: javascript
-severity: INFO
-pattern: new XMLHttpRequest().open(....., false)   
