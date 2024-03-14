@@ -1,6 +1,7 @@
 {
-    "exculdeRules": [""],
-    "exculdeRulesDirs": [""],
-    "ignoredPatterns": ["src/cli/**/*.mjs"],
-    "extensions": ["js", "mjs"]
+	"exculdeRules": [""],
+	"exculdeRulesDirs": [""],
+	"ignoredDirs": ["node_modules", "dist"],
+	"extensions": ["js"],
+	"ignoredPatterns":[]
 }
