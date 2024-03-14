@@ -16,6 +16,7 @@ export default function hanter(){
         rule = parseRule(rule)
     }
     const sourceFiles = getFiles('./', parseConfig())
+    console.log(sourceFiles)
     const reports = {reports: []}
     for(let file of sourceFiles) {
         match({
