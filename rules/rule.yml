@@ -1,6 +1,11 @@
-id: Example-Rule
-message: This Rule is for testing
-language: javascript
+id: express-missing-cors
+message: Missing Cors. Consider using app.use(cors()) to protect the app from an known origins
+language: javascript  
 severity: WARNING
 patterns:
-    - pattern: console.log(.....)
+    - patterns:
+        - pattern: const $EXPRESS = require('express')
+        - pattern: const $APP = $EXPRESS()
+    - pattern-either:
+        - pattern-not: const $CORS = require('cors')
+        - pattern-not: $APP.use($CORS(.....))
