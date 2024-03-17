@@ -29,7 +29,24 @@ function statementsIncludesGeneral(statements) {
     });
     return found
 }
+function clearMeta(childs, metaVariables) {
+    for(let key of Object.keys(childs)){
+        if(Array.isArray(childs[key])) {
+            for(let child of childs[key]) {
+                clearMeta(child, metaVariables)
+            }
+        }
+        if (typeof childs[key]=='object'){
+            clearMeta(childs[key],metaVariables)
+        }
+        else if (typeof childs[key]=='string'){
+            delete metaVariables[key]
+        }
+        delete childs[key]
+    }       
+}
 export {
+    clearMeta,
     noOfnotGeneralArgs,
     argumentsIncludesGeneral,
     createBlockStatement,
