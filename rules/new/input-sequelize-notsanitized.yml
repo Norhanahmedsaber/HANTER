@@ -1,0 +1,30 @@
+id: input-sequelize-notsanitized
+message: Detected a Sequelize input query that is tainted by a user input without sanitization
+severity: WARNING
+metadata:
+    owasp:
+        - A01:2017 - Injection
+        - A03:2021 - Injection
+    cwe:
+        - "CWE-89: Improper Neutralization of Special Elements used in an SQL
+        Command ('SQL Injection')"
+patterns:
+    - pattern-either:
+        - pattern: |
+            function ..... (....., $EVENT, .....) {
+                .....
+                $POOL.query(....., $EVENT, .....)
+                .....
+            }
+        - pattern: |
+            function ..... (....., $EVENT, .....) {
+                .....
+                $POOL.execute(....., $EVENT, .....)
+                .....
+            }
+    - pattern-not: sanitize($EVENT)
+    - pattern-either: 
+        - pattern: require('sequelize')
+   
+
+

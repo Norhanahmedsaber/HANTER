@@ -1,0 +1,7 @@
+id: use-of-deprecated-or-vulnerable-functions
+message: Avoid using functions or methods that are deprecated or known to be vulnerable.
+language: javascript
+severity: WARNING
+pattern-either:
+    - pattern: crypto.createCipher(.....)
+    - pattern: buffer.newBuffer(.....)      

@@ -13,6 +13,7 @@ const display = (reports) => {
     reports.forEach((r) => {
         console.log(file(path.resolve(path.dirname('./'), r.filepath)))
         r.reports.forEach((r) => {
+            // console.log(r)
             console.log(`\t${r.line}:${r.col+1}\t${r.severity=='ERROR'?error("  Error  \t"):""}${r.severity=='WARNING'?warning(" Warning \t"):""}${r.severity=='INFO'?infoD("  Info   \t"):""}${r.message}\t${errorId(r.rule_name)}`)
         })
         console.log("")
@@ -47,4 +48,3 @@ function sortReports(reports) {
   
     return resultArray;
   }
-

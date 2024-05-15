@@ -1,0 +1,7 @@
+id: no-setInterval
+message: setInterval. Consider passing a function instead of a string.
+severity: Error
+language: javascript
+pattern-either:
+    - pattern: setInterval(".....", .....)
+    - pattern: window.setInterval(".....", .....)

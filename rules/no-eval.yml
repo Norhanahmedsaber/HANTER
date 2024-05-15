@@ -1,0 +1,6 @@
+id: no-eval
+pattern-either:
+    - pattern: eval(.....)
+    - pattern: window.eval(.....)
+    - pattern: global.eval(.....)
+message: eval can be harmful.  (no-eval)

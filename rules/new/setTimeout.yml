@@ -1,0 +1,7 @@
+id: no-setTimeout-eval
+message: setTimeout. Consider passing a function instead of a string.
+severity: Error
+language: javascript
+pattern-either:
+    - pattern: setTimeout(".....", .....)
+    - pattern: window.setTimeout(".....", .....)
