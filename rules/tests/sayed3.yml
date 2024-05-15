@@ -1,7 +1,8 @@
-id: anas-nora-test
+id: hanter_example
 type: 1
+severity: WARNING
+languages: [javascript]
 patterns: 
-  - pattern: | 
-        anas()
-        nora()
-message: "Avoid insecure deserialization using pickle.loads"
+  - pattern: x = user_input();
+  - pattern: eval(x);
+message: "This rule is for testing purposes"

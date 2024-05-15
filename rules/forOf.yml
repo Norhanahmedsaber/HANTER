@@ -1,5 +1,4 @@
-id: forOfStatement 
-type: 1
+id: c-string-equality
 patterns:
-    - pattern: "const x = async ()=>{for(let anas of await nora) {console.log('ahmed')}}"     
-message: "Avoid insecure deserialization using pickle.loads"
+        - pattern: "console.log(.....)"
+message: don not use console.log
