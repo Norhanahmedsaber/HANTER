@@ -1,0 +1,7 @@
+id: no-eval-enhanced
+message: eval can be harmful.  (no-eval-enhanced)
+pattern-either:
+    - patterns: 
+        - pattern: $x = eval
+        - pattern: $x(.....)
+    - pattern: eval(.....)

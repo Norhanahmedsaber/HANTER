@@ -1,0 +1,9 @@
+id: no-execScript-enhanced
+message: execScript. Consider passing a function instead of a string.
+severity: Error
+language: javascript
+pattern-either:
+    - patterns: 
+        - pattern: $x = "....."
+        - pattern: execScript($x, .....)
+    - pattern: execScript(".....", .....)

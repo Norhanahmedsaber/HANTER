@@ -12,9 +12,11 @@ import report from './reporter/reporter.js'
 
 export default function hanter(){
     const rules = getRules();
+    // console.log(rules)
     for(let rule of rules) {
         rule = parseRule(rule)
     }
+    // console.log(rules)
     const sourceFiles = getFiles('./', parseConfig())
     console.log(sourceFiles)
     const reports = {reports: []}

@@ -1,0 +1,13 @@
+id: no-setTimeout-enhanced
+message: setTimeout. Consider passing a function instead of a string.
+severity: Error
+language: javascript
+pattern-either:
+    - patterns: 
+        - pattern: $x = "....."
+        - pattern-either:
+            - pattern: setTimeout($x, .....)
+            - pattern: window.setTimeout($x, .....)
+    - pattern-either:
+        - pattern: setTimeout(".....", .....)
+        - pattern: window.setTimeout(".....", .....)

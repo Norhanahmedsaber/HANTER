@@ -1,0 +1,5 @@
+id: insecure-websocket
+message: Use secure WebSocket connections (wss://) to prevent data interception.
+language: javascript
+severity: WARNING
+pattern: new WebSocket("ws://.....")

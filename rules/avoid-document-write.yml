@@ -1,0 +1,5 @@
+id: avoid-document-write
+message: Avoid using document.write() with user-controlled data to prevent XSS attacks.
+language: javascript
+severity: WARNING
+pattern: document.write(.....)

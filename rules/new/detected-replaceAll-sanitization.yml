@@ -1,0 +1,21 @@
+id: detected-replaceAll-sanitization
+message: Detected a manually sanitizing input attempt can be circumvented in many situations it's better to use a well-known sanitization library such as 'sanitize-html' or 'DOMPurify'
+severity: WARNING
+pattern-either:
+    - pattern-either:
+        - pattern: $STR.replace('<', '&lt;')
+        - pattern: $STR.replaceAll('<', '&lt;')
+    - pattern-either:
+        - pattern: $STR.replace('>', '&gt;')
+        - pattern: $STR.replaceAll('>', '&gt;')
+    - pattern-either:
+        - pattern: $STR.replace('"', '&quot;')
+        - pattern: $STR.replaceAll('"', '&quot;')
+    - pattern-either:
+        - pattern: $STR.replace("'", '&apos;')
+        - pattern: $STR.replaceAll("'", '&apos;')
+    - pattern-either:
+        - pattern: $STR.replace('&', '&amp;')
+        - pattern: $STR.replaceAll('&', '&amp;')
+
+

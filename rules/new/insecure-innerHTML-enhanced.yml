@@ -1,0 +1,20 @@
+id: insecure-innerHTML-enhanced
+message: Using innerHTML with user-controlled data can lead to XSS vulnerabilities.
+language: javascript  
+severity: ERROR
+pattern-either:
+    - patterns:
+        - pattern: const $ELEMENT = document.querySelector(.....)
+        - pattern: $ELEMENT.innerHTML = .....
+    - patterns:
+        - pattern: const $ELEMENT2 = document.getElementById(.....)
+        - pattern: $ELEMENT2.innerHTML = .....
+    - patterns:
+        - pattern: const $INNER1 = document.querySelector(.....).innerHTML
+        - pattern: $INNER1 = .....
+    - patterns:
+        - pattern: const $INNER2 = document.getElementById(.....).innerHTML
+        - pattern: $INNER2 = .....
+    - pattern: document.querySelector(.....).innerHTML = .....
+    - pattern: document.getElementById(.....).innerHTML = .....
+    

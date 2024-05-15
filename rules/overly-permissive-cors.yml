@@ -1,0 +1,5 @@
+id: overly-permissive-cors
+message: Avoid overly permissive CORS settings in production environments.
+language: javascript
+severity: WARNING
+pattern: res.setHeader('Access-Control-Allow-Origin', '*')

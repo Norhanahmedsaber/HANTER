@@ -1,0 +1,25 @@
+id: tainted-eval
+message: The 'eval( )' function evaluates Javascript code represented as a string. Executing Javascript from a string is an enormous security risk. 
+severity: WARNING
+metadata:
+    cwe:
+        - "CWE-95: Improper Neutralization of Directives in Dynamically
+          Evaluated Code ('Eval Injection')"
+    owasp:
+        - A03:2021 - Injection
+pattern-either:
+    - pattern: |
+        function ..... (....., $EVENT, .....) {
+            .....
+            eval($EVENT)
+            .....
+        }
+    - pattern: |
+        function ..... (....., $EVENT, .....) {
+            .....
+            eval($EVENT)
+            .....
+        }
+   
+
+

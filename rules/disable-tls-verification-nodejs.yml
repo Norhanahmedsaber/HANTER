@@ -1,0 +1,5 @@
+id: disable-tls-verification-nodejs
+message: TLS/SSL certificate verification should not be disabled in Node.js.
+language: javascript
+severity: ERROR
+pattern: process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
